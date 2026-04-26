@@ -1,0 +1,14 @@
+{
+  "name": "confix",
+  "version": "1.0.0",
+  "description": "AZCON AssetSense — AI-assisted infrastructure inspection and maintenance prioritization platform",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "client": "npm run dev --prefix client",
+    "server": "npm run dev --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
