@@ -28,17 +28,26 @@ An enterprise SaaS platform for field reporting, risk assessment, maintenance co
 ## Getting Started
 
 ```bash
-# 1. Install all dependencies
-npm install
-cd frontend && npm install && cd ..
-cd backend && npm install && cd ..
+# 1. Clone the repo
+git clone https://github.com/ehmedlicelal/Confix.git
+cd Confix
 
-# 2. Configure environment
-# Edit backend/.env with your Supabase URL and service role key
+# 2. Install all dependencies
+npm run install:all
 
-# 3. Start both servers (frontend :3000, backend :5000)
+# 3. Set up environment files
+# Copy the example files and fill in your keys:
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env.local
+
+# 4. Edit backend/.env — add your Supabase service role key
+# (The Supabase URL is already set in the example file)
+
+# 5. Start both servers (frontend :3000, backend :5000)
 npm run dev
 ```
+
+> **Note**: You need Node.js 18+ installed. The `install:all` script installs root, frontend, and backend dependencies in one command.
 
 ## Scripts
 
