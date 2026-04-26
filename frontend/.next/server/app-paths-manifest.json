@@ -1,0 +1,4 @@
+{
+  "/voice-report/page": "app/voice-report/page.js",
+  "/dashboard/page": "app/dashboard/page.js"
+}
