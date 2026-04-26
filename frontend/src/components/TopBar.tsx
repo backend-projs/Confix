@@ -4,23 +4,25 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
 import { COMPANIES, ROLES, cn } from '@/lib/utils';
+import { t, LANG_OPTIONS } from '@/lib/i18n';
 import {
   Gauge, PenLine, ClipboardList, HardHat, Globe2, BookLock,
-  Building, UserCog,
+  Building, UserCog, Mic,
 } from 'lucide-react';
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: Gauge },
-  { href: '/report', label: 'New Report', icon: PenLine },
-  { href: '/reports', label: 'Reports', icon: ClipboardList },
-  { href: '/maintenance', label: 'Maintenance', icon: HardHat },
-  { href: '/map', label: 'Map', icon: Globe2 },
-  { href: '/governance', label: 'Governance', icon: BookLock },
+  { href: '/dashboard', tKey: 'nav.dashboard', icon: Gauge },
+  { href: '/report', tKey: 'nav.newReport', icon: PenLine },
+  { href: '/reports', tKey: 'nav.reports', icon: ClipboardList },
+  { href: '/maintenance', tKey: 'nav.maintenance', icon: HardHat },
+  { href: '/map', tKey: 'nav.map', icon: Globe2 },
+  { href: '/voice-report', tKey: 'nav.voiceReport', icon: Mic },
+  { href: '/governance', tKey: 'nav.governance', icon: BookLock },
 ];
 
 export default function TopBar() {
   const pathname = usePathname();
-  const { selectedCompany, setSelectedCompany, selectedRole, setSelectedRole } = useAppContext();
+  const { selectedCompany, setSelectedCompany, selectedRole, setSelectedRole, lang, setLang } = useAppContext();
 
   return (
     <header className="sticky top-0 z-50 bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] shadow-lg shadow-purple-950/20">
@@ -51,7 +53,7 @@ export default function TopBar() {
                 )}
               >
                 <item.icon size={16} />
-                <span className="hidden lg:inline">{item.label}</span>
+                <span className="hidden lg:inline">{t(item.tKey, lang)}</span>
               </Link>
             );
           })}
@@ -59,6 +61,26 @@ export default function TopBar() {
 
         {/* Selectors */}
         <div className="flex items-center gap-3">
+          {/* Language selector */}
+          <div className="flex items-center gap-0.5 bg-white/[0.06] rounded-lg p-0.5 border border-white/10">
+            {LANG_OPTIONS.map((l) => (
+              <button
+                key={l.code}
+                onClick={() => setLang(l.code)}
+                className={cn(
+                  'flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-all',
+                  lang === l.code
+                    ? 'bg-purple-600/40 text-white shadow-sm'
+                    : 'text-slate-500 hover:text-white hover:bg-white/5'
+                )}
+                aria-label={`Switch to ${l.label}`}
+              >
+                <img src={l.flagUrl} alt={l.label} className="w-5 h-3.5 object-cover rounded-[2px]" />
+                <span>{l.label}</span>
+              </button>
+            ))}
+          </div>
+
           <div className="flex items-center gap-1.5">
             <Building size={14} className="text-purple-400" />
             <select

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { fetchReports, fetchStats } from '@/lib/api';
 import { useAppContext } from '@/context/AppContext';
 import { getRiskColor, formatDate } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
   AreaChart, Area,
@@ -17,7 +18,7 @@ const RISK_SHADES = ['#c4b5fd', '#a78bfa', '#8b5cf6', '#7c3aed'];
 const TOOLTIP_STYLE = { background: '#1a1a2e', border: 'none', borderRadius: 10, color: '#c4b5fd', fontSize: 12, boxShadow: '0 8px 32px rgba(0,0,0,.4)' };
 
 export default function DashboardPage() {
-  const { selectedCompany } = useAppContext();
+  const { selectedCompany, lang } = useAppContext();
   const [stats, setStats] = useState<any>(null);
   const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,22 +38,22 @@ export default function DashboardPage() {
     load();
   }, [selectedCompany]);
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="text-purple-400/60 text-sm animate-pulse">Loading dashboard...</div></div>;
-  if (!stats) return <div className="text-red-400">Failed to load dashboard data</div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><div className="text-purple-400/60 text-sm animate-pulse">{t('dashboard.loading', lang)}</div></div>;
+  if (!stats) return <div className="text-red-400">{t('dashboard.failed', lang)}</div>;
 
   const filtered = selectedCompany === 'all' ? reports : reports.filter((r: any) => r.tenant_id === selectedCompany);
   const topPriority = [...filtered].sort((a, b) => b.risk_matrix_score - a.risk_matrix_score).slice(0, 5);
   const recent = [...filtered].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5);
 
   const statCards = [
-    { label: 'Total Reports', value: stats.totalReports, icon: FileText },
-    { label: 'Critical', value: stats.criticalReports, icon: AlertTriangle },
-    { label: 'High Risk', value: stats.highRiskReports, icon: ShieldAlert },
-    { label: 'Maintenance', value: stats.pendingMaintenance, icon: HardHat },
-    { label: 'Hazard Zones', value: stats.activeHazardZones, icon: Radiation },
-    { label: 'Safety Pending', value: stats.safetyChecklistsPending, icon: ClipboardCheck },
-    { label: 'Reviews', value: stats.supervisorReviewsPending, icon: UserCheck },
-    { label: 'Avg Score', value: stats.averageRiskMatrixScore, icon: Activity },
+    { label: t('dashboard.totalReports', lang), value: stats.totalReports, icon: FileText },
+    { label: t('dashboard.critical', lang), value: stats.criticalReports, icon: AlertTriangle },
+    { label: t('dashboard.highRisk', lang), value: stats.highRiskReports, icon: ShieldAlert },
+    { label: t('dashboard.maintenance', lang), value: stats.pendingMaintenance, icon: HardHat },
+    { label: t('dashboard.hazardZones', lang), value: stats.activeHazardZones, icon: Radiation },
+    { label: t('dashboard.safetyPending', lang), value: stats.safetyChecklistsPending, icon: ClipboardCheck },
+    { label: t('dashboard.reviews', lang), value: stats.supervisorReviewsPending, icon: UserCheck },
+    { label: t('dashboard.avgScore', lang), value: stats.averageRiskMatrixScore, icon: Activity },
   ];
 
   const trendData = (stats.statusDistribution || []).map((d: any) => ({ ...d, value: d.count }));
@@ -67,8 +68,8 @@ export default function DashboardPage() {
             <LayoutGrid size={18} className="text-purple-400" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">Operations Dashboard</h1>
-            <p className="text-purple-300/50 text-xs">Real-time overview of reports, risk levels, and maintenance</p>
+            <h1 className="text-xl font-bold text-white">{t('dashboard.title', lang)}</h1>
+            <p className="text-purple-300/50 text-xs">{t('dashboard.subtitle', lang)}</p>
           </div>
         </div>
       </div>
@@ -94,7 +95,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:min-h-[280px]">
         {/* Risk Donut */}
         <div className="lg:col-span-3 bg-[#16162a] rounded-xl border border-white/[0.04] p-5 flex flex-col">
-          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Risk Distribution</h3>
+          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">{t('dashboard.riskDistribution', lang)}</h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -119,7 +120,7 @@ export default function DashboardPage() {
 
         {/* Reports by Company — bar */}
         <div className="lg:col-span-5 bg-[#16162a] rounded-xl border border-white/[0.04] p-5 flex flex-col">
-          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Reports by Company</h3>
+          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">{t('dashboard.reportsByCompany', lang)}</h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stats.reportsByCompany} barCategoryGap="25%" margin={{ top: 8, right: 8, bottom: 0, left: -8 }}>
@@ -140,7 +141,7 @@ export default function DashboardPage() {
 
         {/* Top Priority list */}
         <div className="lg:col-span-4 bg-[#16162a] rounded-xl border border-white/[0.04] p-5">
-          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5"><AlertTriangle size={12} /> Highest Priority</h3>
+          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5"><AlertTriangle size={12} /> {t('dashboard.highestPriority', lang)}</h3>
           <div className="space-y-1.5">
             {topPriority.map((r: any, i: number) => (
               <div key={r.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.02] transition-colors">
@@ -162,7 +163,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:min-h-[260px]">
         {/* Status area chart */}
         <div className="lg:col-span-5 bg-[#16162a] rounded-xl border border-white/[0.04] p-5 flex flex-col">
-          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Status Overview</h3>
+          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">{t('dashboard.statusOverview', lang)}</h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={trendData} margin={{ top: 8, right: 8, bottom: 0, left: -8 }}>
@@ -183,7 +184,7 @@ export default function DashboardPage() {
 
         {/* Asset breakdown — horizontal bar */}
         <div className="lg:col-span-3 bg-[#16162a] rounded-xl border border-white/[0.04] p-5 flex flex-col">
-          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Asset Types</h3>
+          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">{t('dashboard.assetTypes', lang)}</h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stats.assetTypeBreakdown} layout="vertical" barCategoryGap="20%" margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
@@ -204,7 +205,7 @@ export default function DashboardPage() {
 
         {/* Recent Reports */}
         <div className="lg:col-span-4 bg-[#16162a] rounded-xl border border-white/[0.04] p-5">
-          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5"><ArrowUpRight size={12} /> Latest Reports</h3>
+          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5"><ArrowUpRight size={12} /> {t('dashboard.latestReports', lang)}</h3>
           <div className="space-y-1.5">
             {recent.map((r: any) => (
               <div key={r.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.02] transition-colors">

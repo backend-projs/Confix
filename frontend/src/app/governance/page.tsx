@@ -4,55 +4,58 @@ import {
   Shield, Lock, Users, Eye, ScrollText, Database, Globe, Server,
   AlertTriangle, Fingerprint, KeyRound, FileCheck,
 } from 'lucide-react';
+import { useAppContext } from '@/context/AppContext';
+import { t } from '@/lib/i18n';
 
 export default function GovernancePage() {
+  const { lang } = useAppContext();
   const sections = [
     {
-      title: 'Multi-Tenant Data Separation',
+      title: t('gov.multiTenant', lang),
       icon: Users,
-      desc: 'Each company division operates as an isolated tenant. Data is logically separated via tenant_id. Holding executives can view aggregated data, while company-level users only see their own division.',
+      desc: t('gov.multiTenantDesc', lang),
       items: ['Tenant-scoped queries', 'No cross-tenant data leakage', 'Division-level filtering'],
     },
     {
-      title: 'Role-Based Access Simulation',
+      title: t('gov.rbac', lang),
       icon: KeyRound,
-      desc: 'The platform simulates role-based access control (RBAC) with four levels: Field Engineer, Supervisor, Company Admin, and Holding Executive. Each role has different visibility permissions.',
+      desc: t('gov.rbacDesc', lang),
       items: ['Field Engineers: Create reports, view own data', 'Supervisors: Review, approve, and escalate', 'Company Admin: Full company access', 'Holding Executive: Cross-company overview'],
     },
     {
-      title: 'Audit Trail',
+      title: t('gov.audit', lang),
       icon: ScrollText,
-      desc: 'Every significant action is recorded in a tamper-evident audit trail stored as JSONB. This provides a complete chain of custody for every report.',
+      desc: t('gov.auditDesc', lang),
       items: ['Timestamped entries', 'User attribution', 'Action type logging', 'Immutable history'],
     },
     {
-      title: 'Data Visibility & Classification',
+      title: t('gov.visibility', lang),
       icon: Eye,
-      desc: 'Reports are classified by visibility level — Internal, Restricted, or Critical. Critical-level data has additional access restrictions and coordinate masking.',
+      desc: t('gov.visibilityDesc', lang),
       items: ['Visibility-based access control', 'GPS coordinate masking for critical reports', 'Sensitive data flagging', 'Governance-compliant data sharing'],
     },
     {
-      title: 'Human-led Risk Assessment',
+      title: t('gov.humanRisk', lang),
       icon: AlertTriangle,
-      desc: 'AI does not determine final risk. The Risk Matrix is engineer-reviewed: Impact (1-5) × Likelihood (1-5). AI provides suggestions only — final classification is always human.',
+      desc: t('gov.humanRiskDesc', lang),
       items: ['Engineer reviews every risk score', 'AI suggestions are advisory only', 'No autonomous risk determination', 'Audit trail records who set the risk'],
     },
     {
-      title: 'Worker Safety Protocol',
+      title: t('gov.workerSafety', lang),
       icon: Shield,
-      desc: 'Worker safety rules are derived from asset type and risk level. Mandatory PPE, minimum crew sizes, and supervisor approval requirements are enforced before maintenance begins.',
+      desc: t('gov.workerSafetyDesc', lang),
       items: ['Risk-based PPE requirements', 'Minimum crew size enforcement', 'Supervisor approval gates', 'Hazard zone radius definition'],
     },
     {
-      title: 'Data Sovereignty',
+      title: t('gov.dataSovereignty', lang),
       icon: Globe,
-      desc: 'All data is stored in Supabase PostgreSQL in a defined region. No data leaves the primary database without explicit export. Data residency requirements are respected.',
+      desc: t('gov.dataSovereigntyDesc', lang),
       items: ['Regional data storage', 'No third-party data sharing', 'Encrypted at rest and in transit', 'Compliant with local data regulations'],
     },
     {
-      title: 'Infrastructure Security',
+      title: t('gov.infraSecurity', lang),
       icon: Server,
-      desc: 'The platform uses Row Level Security (RLS) in PostgreSQL, environment-based secrets management, and HTTPS for all communications.',
+      desc: t('gov.infraSecurityDesc', lang),
       items: ['Row Level Security (RLS)', 'Environment variable secrets', 'CORS protection', 'No hardcoded credentials'],
     },
   ];
@@ -62,9 +65,9 @@ export default function GovernancePage() {
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#302b63] to-[#0f172a] p-6">
         <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="relative z-10">
-          <h1 className="text-2xl font-bold flex items-center gap-2 text-white"><Shield size={24} /> Data Governance & Digital Trust</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-white"><Shield size={24} /> {t('gov.title', lang)}</h1>
           <p className="text-purple-300/70 text-sm mt-1">
-            How Confix ensures data integrity, privacy, compliance, and ethical AI usage in critical infrastructure operations.
+            {t('gov.subtitle', lang)}
           </p>
         </div>
       </div>
@@ -72,10 +75,9 @@ export default function GovernancePage() {
       <div className="bg-indigo-950/30 border border-indigo-500/15 rounded-xl p-4 flex items-start gap-3">
         <Fingerprint size={20} className="text-indigo-400 mt-0.5" />
         <div>
-          <p className="text-sm font-semibold text-indigo-300">Ethical AI Commitment</p>
+          <p className="text-sm font-semibold text-indigo-300">{t('gov.ethicalAI', lang)}</p>
           <p className="text-sm text-slate-400">
-            Confix uses AI as an advisory tool only. Risk classification, safety protocols, and operational decisions
-            are always engineer-reviewed. The platform is designed for human-led governance with AI assistance — never AI autonomy.
+            {t('gov.ethicalAIDesc', lang)}
           </p>
         </div>
       </div>

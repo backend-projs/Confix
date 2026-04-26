@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { reportsRouter } from './routes/reports';
 import { assistantRouter } from './routes/assistant';
 import { statsRouter } from './routes/stats';
+import { voiceReportRouter } from './routes/voiceReport';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.get('/api/health', (_req, res) => {
 app.use('/api/reports', reportsRouter);
 app.use('/api/assistant', assistantRouter);
 app.use('/api/stats', statsRouter);
+app.use('/api/voice-report', voiceReportRouter);
 
 app.listen(PORT, () => {
   console.log(`Confix backend running on http://localhost:${PORT}`);

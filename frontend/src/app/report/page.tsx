@@ -9,6 +9,8 @@ import {
   getRiskLevel, getRiskColor,
 } from '@/lib/utils';
 import { Bot, AlertTriangle, Send, Loader2, MapPin, ImagePlus, X } from 'lucide-react';
+import { useAppContext } from '@/context/AppContext';
+import { t } from '@/lib/i18n';
 
 const LocationPicker = dynamic(() => import('@/components/LocationPicker'), {
   ssr: false,
@@ -17,6 +19,7 @@ const LocationPicker = dynamic(() => import('@/components/LocationPicker'), {
 
 export default function NewReportPage() {
   const router = useRouter();
+  const { lang } = useAppContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
     tenantId: 'transport', companyName: 'Transport Division',
@@ -83,7 +86,7 @@ export default function NewReportPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.impact || !form.likelihood) return alert('Please select impact and likelihood');
+    if (!form.impact || !form.likelihood) return alert(t('report.selectImpact', lang));
     setSubmitting(true);
     try {
       await createReport(form);
@@ -96,8 +99,8 @@ export default function NewReportPage() {
   if (success) return (
     <div className="flex items-center justify-center h-64">
       <div className="bg-green-950/30 border border-green-500/20 rounded-xl p-6 text-center">
-        <p className="text-green-400 font-semibold text-lg">Field report created successfully!</p>
-        <p className="text-green-500/70 text-sm mt-1">Redirecting to reports...</p>
+        <p className="text-green-400 font-semibold text-lg">{t('report.success', lang)}</p>
+        <p className="text-green-500/70 text-sm mt-1">{t('report.redirecting', lang)}</p>
       </div>
     </div>
   );
@@ -107,34 +110,34 @@ export default function NewReportPage() {
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#302b63] to-[#0f172a] p-6">
         <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="relative z-10">
-          <h1 className="text-2xl font-bold text-white">New Field Report</h1>
-          <p className="text-purple-300/70 text-sm mt-1">Create a structured infrastructure issue report with risk assessment.</p>
+          <h1 className="text-2xl font-bold text-white">{t('report.title', lang)}</h1>
+          <p className="text-purple-300/70 text-sm mt-1">{t('report.subtitle', lang)}</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* A: Asset Information */}
         <div className="bg-[#16162a] rounded-xl border border-white/5 p-5 space-y-4">
-          <h2 className="font-semibold text-purple-300 border-b border-white/5 pb-2">Asset Information</h2>
+          <h2 className="font-semibold text-purple-300 border-b border-white/5 pb-2">{t('report.assetInfo', lang)}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">Company / Division</label>
+              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.company', lang)}</label>
               <select value={form.tenantId} onChange={e => handleCompany(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
                 {COMPANIES.filter(c => c.id !== 'all').map(c => <option key={c.id} value={c.id} className="bg-slate-900">{c.name}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">Asset Name *</label>
+              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.assetName', lang)} *</label>
               <input required value={form.assetName} onChange={e => setForm(f => ({ ...f, assetName: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Bridge A21" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">Asset Type</label>
+              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.assetType', lang)}</label>
               <select value={form.assetType} onChange={e => setForm(f => ({ ...f, assetType: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                {ASSET_TYPES.map(t => <option key={t} value={t} className="bg-slate-900">{t}</option>)}
+                {ASSET_TYPES.map(typ => <option key={typ} value={typ} className="bg-slate-900">{typ}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">Location Name *</label>
+              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.locationName', lang)} *</label>
               <input required value={form.locationName} onChange={e => setForm(f => ({ ...f, locationName: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Ziya Bunyadov Ave" />
             </div>
           </div>
@@ -142,7 +145,7 @@ export default function NewReportPage() {
           {/* Map Location Picker */}
           <div>
             <label className="block text-sm font-medium text-slate-400 mb-2 flex items-center gap-1.5">
-              <MapPin size={14} /> Select Location on Map
+              <MapPin size={14} /> {t('report.selectLocation', lang)}
             </label>
             <div className="h-56 rounded-lg overflow-hidden border border-white/10">
               <LocationPicker
@@ -153,7 +156,7 @@ export default function NewReportPage() {
             </div>
             {form.latitude && form.longitude && (
               <p className="text-[11px] text-purple-400/60 mt-1.5">
-                Selected: {form.latitude}, {form.longitude}
+                {t('report.selected', lang)}: {form.latitude}, {form.longitude}
               </p>
             )}
           </div>
@@ -161,33 +164,33 @@ export default function NewReportPage() {
 
         {/* B: Issue Details */}
         <div className="bg-[#16162a] rounded-xl border border-white/5 p-5 space-y-4">
-          <h2 className="font-semibold text-blue-300 border-b border-white/5 pb-2">Issue Details</h2>
+          <h2 className="font-semibold text-blue-300 border-b border-white/5 pb-2">{t('report.issueDetails', lang)}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">Issue Type</label>
+              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.issueType', lang)}</label>
               <select value={form.issueType} onChange={e => setForm(f => ({ ...f, issueType: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                {ISSUE_TYPES.map(t => <option key={t} value={t} className="bg-slate-900">{t}</option>)}
+                {ISSUE_TYPES.map(typ => <option key={typ} value={typ} className="bg-slate-900">{typ}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">Visibility Level</label>
+              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.visibilityLevel', lang)}</label>
               <select value={form.visibilityLevel} onChange={e => setForm(f => ({ ...f, visibilityLevel: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
                 {['Internal', 'Restricted', 'Critical'].map(v => <option key={v} value={v} className="bg-slate-900">{v}</option>)}
               </select>
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-400 mb-1">Description *</label>
-            <textarea required rows={3} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Describe the issue in detail..." />
+            <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.description', lang)} *</label>
+            <textarea required rows={3} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder={t('report.descPlaceholder', lang)} />
           </div>
 
           {/* Image upload with metadata extraction */}
           <div>
-            <label className="block text-sm font-medium text-slate-400 mb-1">Attach Image (optional)</label>
+            <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.attachImage', lang)}</label>
             <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
             <div className="flex items-center gap-3">
               <button type="button" onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 hover:bg-white/10 transition-colors">
-                <ImagePlus size={15} /> Choose Image
+                <ImagePlus size={15} /> {t('report.chooseImage', lang)}
               </button>
               {form.imageName && (
                 <div className="flex items-center gap-2 text-xs text-purple-400">
@@ -201,16 +204,16 @@ export default function NewReportPage() {
                 <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
               </div>
             )}
-            <p className="text-[10px] text-slate-600 mt-1">GPS metadata from the image will auto-fill location if available.</p>
+            <p className="text-[10px] text-slate-600 mt-1">{t('report.gpsHint', lang)}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">Created By *</label>
+              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.createdBy', lang)} *</label>
               <input required value={form.createdBy} onChange={e => setForm(f => ({ ...f, createdBy: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Your name" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">Assigned Team</label>
+              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.assignedTeam', lang)}</label>
               <input value={form.assignedTeam} onChange={e => setForm(f => ({ ...f, assignedTeam: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Road Crew B" />
             </div>
           </div>
@@ -218,30 +221,30 @@ export default function NewReportPage() {
 
         {/* C: AI Assistant */}
         <div className="bg-[#16162a] rounded-xl border border-white/5 p-5 space-y-4">
-          <h2 className="font-semibold text-indigo-300 border-b border-white/5 pb-2 flex items-center gap-2"><Bot size={18} className="text-indigo-400" /> AI Assistant</h2>
+          <h2 className="font-semibold text-indigo-300 border-b border-white/5 pb-2 flex items-center gap-2"><Bot size={18} className="text-indigo-400" /> {t('report.aiAssistant', lang)}</h2>
           <button type="button" onClick={handleAI} disabled={aiLoading || !form.description} className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 flex items-center gap-2 transition-all">
             {aiLoading ? <Loader2 size={16} className="animate-spin" /> : <Bot size={16} />}
-            {aiLoading ? 'AI assistant is structuring the report...' : 'Get AI Assistant Suggestions'}
+            {aiLoading ? t('report.aiLoading', lang) : t('report.aiButton', lang)}
           </button>
           {aiSuggestions && (
             <div className="bg-indigo-950/30 border border-indigo-500/15 rounded-lg p-4 space-y-2">
-              <div><span className="text-xs font-semibold text-slate-400">Suggested Category:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedIssueCategory}</span></div>
-              <div><span className="text-xs font-semibold text-slate-400">Suggested Summary:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedSummary}</span></div>
-              <div><span className="text-xs font-semibold text-slate-400">Suggested PPE:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedPPE?.join(', ')}</span></div>
-              <div><span className="text-xs font-semibold text-slate-400">Safety Instructions:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedSafetyInstructions?.join(', ')}</span></div>
-              <div><span className="text-xs font-semibold text-slate-400">Suggested Next Step:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedNextStep}</span></div>
-              <p className="text-xs text-slate-500 italic mt-2 border-t border-white/5 pt-2">AI does not determine final risk. Final classification is engineer-reviewed.</p>
+              <div><span className="text-xs font-semibold text-slate-400">{t('report.suggestedCategory', lang)}:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedIssueCategory}</span></div>
+              <div><span className="text-xs font-semibold text-slate-400">{t('report.suggestedSummary', lang)}:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedSummary}</span></div>
+              <div><span className="text-xs font-semibold text-slate-400">{t('report.suggestedPPE', lang)}:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedPPE?.join(', ')}</span></div>
+              <div><span className="text-xs font-semibold text-slate-400">{t('report.safetyInstructions', lang)}:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedSafetyInstructions?.join(', ')}</span></div>
+              <div><span className="text-xs font-semibold text-slate-400">{t('report.suggestedNextStep', lang)}:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedNextStep}</span></div>
+              <p className="text-xs text-slate-500 italic mt-2 border-t border-white/5 pt-2">{t('report.aiDisclaimer', lang)}</p>
             </div>
           )}
         </div>
 
         {/* D: Risk Assessment — label-only, no numbers */}
         <div className="bg-[#16162a] rounded-xl border border-white/5 p-5 space-y-4">
-          <h2 className="font-semibold text-rose-300 border-b border-white/5 pb-2 flex items-center gap-2"><AlertTriangle size={18} className="text-rose-400" /> Human Risk Assessment</h2>
-          <p className="text-xs text-slate-500">Engineer-reviewed classification — select severity and probability.</p>
+          <h2 className="font-semibold text-rose-300 border-b border-white/5 pb-2 flex items-center gap-2"><AlertTriangle size={18} className="text-rose-400" /> {t('report.riskAssessment', lang)}</h2>
+          <p className="text-xs text-slate-500">{t('report.riskSubtitle', lang)}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-2">Impact Severity *</label>
+              <label className="block text-sm font-medium text-slate-400 mb-2">{t('report.impactSeverity', lang)} *</label>
               <div className="flex flex-wrap gap-2">
                 {IMPACT_OPTIONS.map(o => (
                   <button key={o.value} type="button" onClick={() => setForm(f => ({ ...f, impact: o.value }))}
@@ -251,7 +254,7 @@ export default function NewReportPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-2">Likelihood *</label>
+              <label className="block text-sm font-medium text-slate-400 mb-2">{t('report.likelihood', lang)} *</label>
               <div className="flex flex-wrap gap-2">
                 {LIKELIHOOD_OPTIONS.map(o => (
                   <button key={o.value} type="button" onClick={() => setForm(f => ({ ...f, likelihood: o.value }))}
@@ -263,18 +266,18 @@ export default function NewReportPage() {
           </div>
           {riskLevel && (
             <div className="bg-purple-950/30 rounded-lg p-4 border border-purple-500/10 flex items-center gap-4">
-              <span className="text-xs text-slate-500">Assessed Risk Level:</span>
+              <span className="text-xs text-slate-500">{t('report.assessedRisk', lang)}:</span>
               <span className={`text-sm px-3 py-1 rounded-full font-semibold border ${getRiskColor(riskLevel)}`}>{riskLevel}</span>
             </div>
           )}
-          <p className="text-xs text-slate-500 italic">Final risk classification is engineer-reviewed.</p>
+          <p className="text-xs text-slate-500 italic">{t('report.riskDisclaimer', lang)}</p>
         </div>
 
         {/* E: Submit */}
         <div className="flex justify-end">
           <button type="submit" disabled={submitting} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:from-blue-500 hover:to-purple-500 disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-purple-500/20 transition-all">
             {submitting ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-            Create Field Report
+            {t('report.submit', lang)}
           </button>
         </div>
       </form>

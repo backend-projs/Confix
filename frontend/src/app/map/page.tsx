@@ -6,11 +6,12 @@ import { fetchReports } from '@/lib/api';
 import { useAppContext } from '@/context/AppContext';
 import { getRiskColor, getStatusColor, formatDate, getRiskLevel } from '@/lib/utils';
 import { MapPin, X } from 'lucide-react';
+import { t } from '@/lib/i18n';
 
 const MapView = dynamic(() => import('@/components/MapView'), { ssr: false, loading: () => <div className="h-full flex items-center justify-center text-gray-400">Loading map...</div> });
 
 export default function MapPage() {
-  const { selectedCompany } = useAppContext();
+  const { selectedCompany, lang } = useAppContext();
   const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<any>(null);
@@ -34,15 +35,15 @@ export default function MapPage() {
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#302b63] to-[#0f172a] p-6">
         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="relative z-10">
-          <h1 className="text-2xl font-bold flex items-center gap-2 text-white"><MapPin size={24} /> Infrastructure Map</h1>
-          <p className="text-purple-300/70 text-sm mt-1">Geospatial visualization of reported issues, hazard zones, and risk levels.</p>
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-white"><MapPin size={24} /> {t('map.title', lang)}</h1>
+          <p className="text-purple-300/70 text-sm mt-1">{t('map.subtitle', lang)}</p>
         </div>
       </div>
 
       <div className="flex gap-4 h-[calc(100vh-250px)]">
         <div className="flex-1 bg-[#16162a] rounded-xl border border-white/5 overflow-hidden">
           {loading ? (
-            <div className="h-full flex items-center justify-center text-purple-400 animate-pulse">Loading...</div>
+            <div className="h-full flex items-center justify-center text-purple-400 animate-pulse">{t('map.loading', lang)}</div>
           ) : (
             <MapView reports={reports} onSelect={setSelected} focusReport={selected} />
           )}
@@ -61,20 +62,20 @@ export default function MapPage() {
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusColor(selected.status)}`}>{selected.status}</span>
               </div>
               <div className="text-xs space-y-1 text-slate-400">
-                <p><span className="font-semibold text-slate-300">Issue:</span> {selected.issue_type}</p>
-                <p><span className="font-semibold text-slate-300">Asset Type:</span> {selected.asset_type}</p>
-                <p><span className="font-semibold text-slate-300">Impact:</span> {['', 'Minor', 'Moderate', 'Serious', 'Major', 'Critical'][selected.impact] || selected.impact}</p>
-                <p><span className="font-semibold text-slate-300">Likelihood:</span> {['', 'Rare', 'Unlikely', 'Possible', 'Likely', 'Almost Certain'][selected.likelihood] || selected.likelihood}</p>
-                <p><span className="font-semibold text-slate-300">Hazard Radius:</span> {selected.hazard_radius_meters}m</p>
-                <p><span className="font-semibold text-slate-300">Min Crew:</span> {selected.minimum_crew}</p>
-                <p><span className="font-semibold text-slate-300">PPE:</span> {(selected.required_ppe || []).join(', ')}</p>
+                <p><span className="font-semibold text-slate-300">{t('map.issue', lang)}:</span> {selected.issue_type}</p>
+                <p><span className="font-semibold text-slate-300">{t('map.assetType', lang)}:</span> {selected.asset_type}</p>
+                <p><span className="font-semibold text-slate-300">{t('map.impact', lang)}:</span> {['', 'Minor', 'Moderate', 'Serious', 'Major', 'Critical'][selected.impact] || selected.impact}</p>
+                <p><span className="font-semibold text-slate-300">{t('map.likelihood', lang)}:</span> {['', 'Rare', 'Unlikely', 'Possible', 'Likely', 'Almost Certain'][selected.likelihood] || selected.likelihood}</p>
+                <p><span className="font-semibold text-slate-300">{t('map.hazardRadius', lang)}:</span> {selected.hazard_radius_meters}m</p>
+                <p><span className="font-semibold text-slate-300">{t('map.minCrew', lang)}:</span> {selected.minimum_crew}</p>
+                <p><span className="font-semibold text-slate-300">{t('map.ppe', lang)}:</span> {(selected.required_ppe || []).join(', ')}</p>
               </div>
               <p className="text-xs text-slate-400">{selected.description}</p>
               <p className="text-xs text-slate-600">Created {formatDate(selected.created_at)}</p>
             </div>
           ) : (
             <div className="space-y-3">
-              <h3 className="font-semibold text-sm text-slate-300">All Reports ({reports.length})</h3>
+              <h3 className="font-semibold text-sm text-slate-300">{t('map.allReports', lang)} ({reports.length})</h3>
               <div className="space-y-2">
                 {reports.map((r: any) => (
                   <div key={r.id} onClick={() => setSelected(r)} className="p-2 rounded-lg border border-white/5 hover:bg-white/[0.03] cursor-pointer transition-colors">
@@ -92,14 +93,14 @@ export default function MapPage() {
       </div>
 
       <div className="bg-[#16162a] rounded-xl border border-white/5 p-3 flex items-center gap-6 text-xs text-slate-400">
-        <span className="font-semibold text-slate-300">Risk Level:</span>
+        <span className="font-semibold text-slate-300">{t('map.riskLevel', lang)}:</span>
         {['Low', 'Medium', 'High', 'Critical'].map(level => (
           <div key={level} className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: level === 'Low' ? '#22c55e' : level === 'Medium' ? '#eab308' : level === 'High' ? '#f97316' : '#ef4444' }} />
             <span>{level}</span>
           </div>
         ))}
-        <span className="ml-4 text-slate-600">Dashed circles = Hazard zones</span>
+        <span className="ml-4 text-slate-600">{t('map.dashedCircles', lang)}</span>
       </div>
     </div>
   );

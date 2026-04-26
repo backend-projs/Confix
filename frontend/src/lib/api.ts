@@ -75,3 +75,16 @@ export async function fetchStats() {
   if (!res.ok) throw new Error('Failed to fetch stats');
   return res.json();
 }
+
+export async function voiceReportParse(transcript: string) {
+  const res = await fetch(`${API}/voice-report/parse`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ transcript }),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Failed to parse voice report');
+  }
+  return res.json();
+}
