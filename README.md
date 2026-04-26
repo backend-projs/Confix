@@ -1,65 +1,84 @@
-# Confix — AZCON AssetSense
+# Confix — Smart Field Reporting & Safety Operations Platform
 
-AI-assisted infrastructure inspection and maintenance prioritization platform for AZCON Holding.
+An enterprise SaaS platform for field reporting, risk assessment, maintenance coordination, and safety operations in critical infrastructure. Built for hackathon demonstration with real Supabase persistence.
 
-## Description
+## Architecture
 
-Confix (AssetSense) enables field engineers to upload infrastructure inspection reports, automatically detect possible issues using a mock AI analyzer, calculate risk scores, prioritize maintenance tasks, and visualize all problem reports on an interactive map.
+| Layer      | Technology                                             |
+| ---------- | ------------------------------------------------------ |
+| Frontend   | Next.js 14 (App Router), TypeScript, Tailwind CSS      |
+| Charts     | Recharts                                               |
+| Map        | React Leaflet + OpenStreetMap (client-only)             |
+| Icons      | Lucide React                                           |
+| Backend    | Express.js, TypeScript, CORS                           |
+| Database   | Supabase PostgreSQL (persistent)                       |
+| AI         | Mock assistant (advisory only, no paid APIs)           |
 
-> **Note:** AI analysis is simulated. No real computer-vision model or paid API is used. The mock analyzer can be replaced with a real API in a future iteration.
+## Key Features
 
-## Tech Stack
-
-| Layer     | Technology                                       |
-| --------- | ------------------------------------------------ |
-| Frontend  | React 18, Vite, TypeScript, Tailwind CSS         |
-| Routing   | React Router v6                                  |
-| Charts    | Recharts                                         |
-| Map       | React Leaflet + OpenStreetMap tiles               |
-| Icons     | Lucide React                                     |
-| Backend   | Node.js, Express, TypeScript (tsx)               |
-| Data      | In-memory array (resets on server restart)        |
+- **Dashboard** — Summary cards, risk distribution charts, asset breakdowns, top priority and recent reports
+- **New Report** — Structured form with AI assistant suggestions and human-led Risk Matrix (Impact × Likelihood)
+- **Reports** — Filterable table with search, detail modal showing full audit trail and safety protocol
+- **Maintenance** — Active task queue with status updates, safety check-in modal, emergency alert trigger
+- **Map** — Geospatial view with color-coded risk markers, hazard radius circles, side panel
+- **Governance** — Data governance, multi-tenant separation, RBAC simulation, ethical AI commitment
+- **Multi-tenant** — 4 company divisions (Transport, Telecom, Road Maintenance, Construction)
+- **Role simulation** — Field Engineer, Supervisor, Company Admin, Holding Executive
 
 ## Getting Started
 
 ```bash
-# 1. Install root dependencies (concurrently)
+# 1. Install all dependencies
 npm install
+cd frontend && npm install && cd ..
+cd backend && npm install && cd ..
 
-# 2. Install client dependencies
-npm install --prefix client
+# 2. Configure environment
+# Edit backend/.env with your Supabase URL and service role key
 
-# 3. Install server dependencies
-npm install --prefix server
-
-# 4. Start both client (port 5173) and server (port 5000)
+# 3. Start both servers (frontend :3000, backend :5000)
 npm run dev
 ```
 
 ## Scripts
 
-| Command           | Description                        |
-| ----------------- | ---------------------------------- |
-| `npm run dev`     | Start client + server concurrently |
-| `npm run client`  | Start Vite dev server only         |
-| `npm run server`  | Start Express dev server only      |
+| Command            | Description                            |
+| ------------------ | -------------------------------------- |
+| `npm run dev`      | Start frontend + backend concurrently  |
+| `npm run frontend` | Start Next.js dev server only          |
+| `npm run backend`  | Start Express dev server only          |
 
 ## API Endpoints
 
-| Method | Path                        | Description                  |
-| ------ | --------------------------- | ---------------------------- |
-| GET    | `/api/reports`              | List all reports             |
-| GET    | `/api/reports/:id`          | Get single report            |
-| POST   | `/api/inspect`              | Run mock AI analysis         |
-| POST   | `/api/reports`              | Create a new report          |
-| PATCH  | `/api/reports/:id/status`   | Update report status         |
-| GET    | `/api/health`               | Health check                 |
+| Method | Path                                 | Description                     |
+| ------ | ------------------------------------ | ------------------------------- |
+| GET    | `/api/health`                        | Health check                    |
+| GET    | `/api/reports`                       | List reports (with filters)     |
+| GET    | `/api/reports/:id`                   | Get single report               |
+| POST   | `/api/reports`                       | Create a new report             |
+| PATCH  | `/api/reports/:id/status`            | Update report status            |
+| PATCH  | `/api/reports/:id/safety-checklist`  | Complete safety checklist       |
+| POST   | `/api/reports/:id/emergency-alert`   | Trigger emergency alert         |
+| POST   | `/api/assistant`                     | Get AI assistant suggestions    |
+| GET    | `/api/stats`                         | Dashboard statistics            |
 
-## Future Roadmap
+## Environment Variables
 
-- Real AZCON data integration
-- Computer vision model training
-- Drone inspection support
-- Mobile app for field engineers
-- ERP / maintenance system integration
-- Predictive maintenance analytics
+Create `backend/.env`:
+```
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+PORT=5000
+```
+
+Create `frontend/.env.local`:
+```
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
+
+## Design Principles
+
+- **Human-led governance** — AI provides suggestions only; risk classification is always engineer-reviewed
+- **Worker safety first** — PPE, crew requirements, supervisor approval gates enforced by risk level
+- **Audit trail** — Every action timestamped and attributed in immutable JSONB log
+- **Data sovereignty** — Multi-tenant separation, visibility-based access, coordinate masking for critical data
