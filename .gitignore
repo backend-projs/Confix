@@ -5,7 +5,7 @@ node_modules/
 frontend/.next/
 frontend/out/
 
-# Environment files
+# Environment files (optional - defaults are hardcoded for hackathon demo)
 .env
 .env.local
 .env.*.local
