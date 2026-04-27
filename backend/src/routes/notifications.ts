@@ -72,7 +72,7 @@ notificationsRouter.post('/notify-nearest', authMiddleware, requireRole('admin',
       .select('id, full_name, workplace_latitude, workplace_longitude, company_id, worker_type')
       .eq('role', 'worker')
       .eq('status', 'active')
-      .eq('worker_type', 'field')
+      .in('worker_type', ['field', 'audit'])
       .not('workplace_latitude', 'is', null)
       .not('workplace_longitude', 'is', null);
 
@@ -85,7 +85,7 @@ notificationsRouter.post('/notify-nearest', authMiddleware, requireRole('admin',
     const { data: workers, error: wErr } = await q;
     if (wErr) return res.status(500).json({ error: wErr.message });
     if (!workers || workers.length === 0) {
-      return res.status(404).json({ error: 'No active field workers with workplace location found' });
+      return res.status(404).json({ error: 'No active workers with workplace location found' });
     }
 
     // Find nearest

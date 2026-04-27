@@ -312,6 +312,13 @@ export default function AdminWorkersPage() {
                       <option value="inactive">Inactive</option>
                     </select>
                   </div>
+                  <div>
+                    <label className="block text-[11px] font-medium text-gray-500 dark:text-slate-400 mb-1">Worker Type</label>
+                    <select value={editForm.worker_type ?? w.worker_type} onChange={e => setEditForm((f: any) => ({ ...f, worker_type: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                      <option value="field">Field Worker</option>
+                      <option value="audit">Audit Worker</option>
+                    </select>
+                  </div>
                   <div className="md:col-span-2 flex justify-end gap-2">
                     <button onClick={() => { setEditingId(null); setEditForm({}); }} className="px-3 py-2 bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-slate-300 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors">Cancel</button>
                     <button onClick={() => handleEditSave(w.id)} disabled={saving} className="px-3 py-2 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-500 disabled:opacity-50 flex items-center gap-1 transition-colors">
@@ -327,6 +334,9 @@ export default function AdminWorkersPage() {
                       <span className="font-semibold text-sm text-gray-900 dark:text-white">{w.full_name}</span>
                       <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200 font-medium">{w.worker_id}</span>
                       <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border ${w.status === 'active' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-gray-100 text-gray-800 border-gray-200'}`}>{w.status}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border ${(w.worker_type || 'field') === 'field' ? 'bg-purple-100 text-purple-800 border-purple-200' : 'bg-amber-100 text-amber-800 border-amber-200'}`}>
+                        {(w.worker_type || 'field') === 'field' ? 'Field' : 'Audit'}
+                      </span>
                     </div>
                     <p className="text-sm font-medium text-gray-800 dark:text-slate-200">{w.position}</p>
                     {w.team && <p className="text-[11px] text-gray-500 dark:text-slate-400">Team: {w.team}</p>}
