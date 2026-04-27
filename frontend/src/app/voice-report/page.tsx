@@ -201,6 +201,8 @@ export default function VoiceReportPage() {
         impact: 3,
         likelihood: 3,
         visibilityLevel: 'Internal',
+        latitude: 40.4093,
+        longitude: 49.8671,
       });
       setState('submitted');
     } catch (err: any) {
