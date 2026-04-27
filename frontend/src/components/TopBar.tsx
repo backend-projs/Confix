@@ -56,7 +56,7 @@ export default function TopBar() {
     navItems.push({ href: '/admin/workers', tKey: 'nav.workers', icon: Users });
   }
 
-  const showLegacySelectors = !user;
+  const showLegacySelectors = !user && pathname !== '/login';
 
   return (
     <>
@@ -419,7 +419,7 @@ export default function TopBar() {
                   <span>Sign Out</span>
                 </button>
               )}
-              {!user && (
+              {showLegacySelectors && (
                 <>
                   <div className="space-y-1.5">
                     <label className="text-[11px] uppercase tracking-wider text-gray-500 dark:text-slate-500 font-medium flex items-center gap-1.5">
