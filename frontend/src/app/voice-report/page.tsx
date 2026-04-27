@@ -33,7 +33,7 @@ export default function VoiceReportPage() {
   const [supported, setSupported] = useState(true);
   const [manualMode, setManualMode] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
-  const { lang, token } = useAppContext();
+  const { lang, token, user } = useAppContext();
   const speechCode = LANG_OPTIONS.find(l => l.code === lang)?.speechCode || 'en-US';
 
   // Form fields
@@ -272,6 +272,9 @@ export default function VoiceReportPage() {
         imageName: images.map(img => img.name).join(', ') || null,
         latitude: lat,
         longitude: lng,
+        tenantId: user?.company_id || 'transport',
+        createdBy: user?.full_name || 'Voice Reporter',
+        assignedTeam: user?.team || '',
       });
       setState('submitted');
       setShowLocationModal(false);

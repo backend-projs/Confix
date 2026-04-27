@@ -107,6 +107,9 @@ export default function WorkerReportPage() {
         impact,
         likelihood,
         visibilityLevel: 'Internal',
+        tenantId: user?.company_id || 'transport',
+        createdBy: user?.full_name || '',
+        assignedTeam: user?.team || '',
       });
       setSuccess(true);
       setTimeout(() => router.push('/reports'), 1500);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { createReport, getAISuggestions } from '@/lib/api';
@@ -19,7 +19,7 @@ const LocationPicker = dynamic(() => import('@/components/LocationPicker'), {
 
 export default function NewReportPage() {
   const router = useRouter();
-  const { lang } = useAppContext();
+  const { lang, user } = useAppContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
     tenantId: 'transport', companyName: 'Transport Division',
@@ -30,11 +30,26 @@ export default function NewReportPage() {
     impact: 0, likelihood: 0,
     createdBy: '', assignedTeam: '',
   });
+
   const [aiSuggestions, setAiSuggestions] = useState<any>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // Pre-fill user data
+  useEffect(() => {
+    if (user) {
+      const co = COMPANIES.find(c => c.id === user.company_id);
+      setForm(f => ({
+        ...f,
+        tenantId: user.company_id || 'transport',
+        companyName: co?.name || user.company_id || 'Transport Division',
+        createdBy: user.full_name || '',
+        assignedTeam: user.team || '',
+      }));
+    }
+  }, [user]);
 
   const riskScore = form.impact * form.likelihood;
   const riskLevel = riskScore > 0 ? getRiskLevel(riskScore) : '';

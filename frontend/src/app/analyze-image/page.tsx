@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { ScanEye, Upload, Loader2, AlertCircle, RefreshCw, ShieldCheck, ShieldAlert, MapPin, Eye, Tag, Activity, Camera, X, Send, CheckCircle2, AlertTriangle, Navigation, Map } from 'lucide-react';
+import { Scan, Upload, Loader2, AlertCircle, RefreshCw, ShieldCheck, ShieldAlert, MapPin, Eye, Tag, Activity, Camera, X, Send, CheckCircle2, AlertTriangle, Navigation, Map } from 'lucide-react';
 import { cn, COMPANIES, ASSET_TYPES, ISSUE_TYPES, IMPACT_OPTIONS, LIKELIHOOD_OPTIONS, getRiskLevel, getRiskColor } from '@/lib/utils';
 import { useAppContext } from '@/context/AppContext';
 import { t } from '@/lib/i18n';
@@ -104,7 +104,7 @@ export default function AnalyzeImagePage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const { lang } = useAppContext();
+  const { lang, user } = useAppContext();
 
   // Report form state
   const [form, setForm] = useState({
@@ -116,6 +116,20 @@ export default function AnalyzeImagePage() {
     impact: 0, likelihood: 0,
     createdBy: '', assignedTeam: '',
   });
+
+  // Pre-fill user data
+  useEffect(() => {
+    if (user) {
+      const co = COMPANIES.find(c => c.id === user.company_id);
+      setForm(f => ({
+        ...f,
+        tenantId: user.company_id || 'transport',
+        companyName: co?.name || user.company_id || 'Transport Division',
+        createdBy: user.full_name || '',
+        assignedTeam: user.team || '',
+      }));
+    }
+  }, [user]);
 
   const riskScore = form.impact * form.likelihood;
   const riskLevel = riskScore > 0 ? getRiskLevel(riskScore) : '';
@@ -446,7 +460,7 @@ export default function AnalyzeImagePage() {
               {state === 'analyzing' ? (
                 <Loader2 size={18} className="animate-spin" />
               ) : (
-                <ScanEye size={18} />
+                <Scan size={18} />
               )}
               {state === 'analyzing' ? t('imgAI.analyzing', lang) : t('imgAI.analyze', lang)}
             </button>
@@ -473,7 +487,7 @@ export default function AnalyzeImagePage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <ScanEye size={22} className="text-purple-600 dark:text-purple-400" />
+                <Scan size={22} className="text-purple-600 dark:text-purple-400" />
                 {t('imgAI.result', lang)}
               </h2>
               <button

@@ -8,7 +8,7 @@ import { COMPANIES, ROLES, cn } from '@/lib/utils';
 import { t, LANG_OPTIONS } from '@/lib/i18n';
 import {
   Gauge, PenLine, ClipboardList, HardHat, Globe2, BookLock,
-  Building, UserCog, Menu, X, Sun, Moon, ChevronDown, Mic, ScanEye,
+  Building, UserCog, Menu, X, Sun, Moon, ChevronDown, Mic, Scan,
   LogIn, LogOut, Shield, Users, FileText,
 } from 'lucide-react';
 import NotificationsBell from './NotificationsBell';
@@ -98,7 +98,7 @@ export default function TopBar() {
                         <Mic size={14} /> {t('nav.voiceReport', lang)}
                       </Link>
                       <Link href="/analyze-image" onClick={() => setReportDropdownOpen(false)} className={cn('flex items-center gap-2 px-4 py-2.5 text-sm transition-colors', pathname === '/analyze-image' ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-white/5')}>
-                        <ScanEye size={14} /> {t('nav.imageAnalysis', lang)}
+                        <Scan size={14} /> {t('nav.imageAnalysis', lang)}
                       </Link>
                     </div>
                   )}
@@ -334,7 +334,7 @@ export default function TopBar() {
                         <Mic size={14} /> {t('nav.voiceReport', lang)}
                       </Link>
                       <Link href="/analyze-image" onClick={() => setMobileOpen(false)} className={cn('flex items-center gap-2 px-3 py-2 rounded-lg text-sm', pathname === '/analyze-image' ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-white/5')}>
-                        <ScanEye size={14} /> {t('nav.imageAnalysis', lang)}
+                        <Scan size={14} /> {t('nav.imageAnalysis', lang)}
                       </Link>
                     </div>
                   </div>

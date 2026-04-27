@@ -7,7 +7,7 @@ import {
   getRiskColor, getStatusColor, getVisibilityColor, formatDate,
   ASSET_TYPES, ISSUE_TYPES, STATUSES,
 } from '@/lib/utils';
-import { Search, X, Eye, ShieldBan, BellPlus, Loader2 } from 'lucide-react';
+import { Search, X, Eye, ShieldBan, BellPlus, Loader2, Scan } from 'lucide-react';
 import { t } from '@/lib/i18n';
 import { notifyNearestWorker } from '@/lib/auth-api';
 
@@ -128,7 +128,7 @@ export default function ReportsPage() {
                       </div>
                     ) : (
                       <div className="w-8 h-8 rounded-md bg-gray-100 dark:bg-white/5 border border-dashed border-gray-200 dark:border-white/10 flex items-center justify-center">
-                        <ScanEye size={12} className="text-gray-300 dark:text-slate-700" />
+                        <Scan size={12} className="text-gray-300 dark:text-slate-700" />
                       </div>
                     )}
                   </td>
