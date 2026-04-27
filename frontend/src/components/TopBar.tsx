@@ -77,49 +77,34 @@ export default function TopBar() {
             {user && (
               <>
                 {/* New Report Dropdown */}
-                {user.role !== 'worker' ? (
-                  <div className="relative" data-report-dropdown>
-                    <button
-                      onClick={() => setReportDropdownOpen(o => !o)}
-                      className={cn(
-                        'flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap',
-                        (pathname === '/report' || pathname === '/voice-report' || pathname === '/analyze-image')
-                          ? 'bg-purple-50 text-purple-700 dark:bg-white/15 dark:text-white shadow-inner shadow-purple-500/10'
-                          : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
-                      )}
-                    >
-                      <PenLine size={16} />
-                      <span className="hidden lg:inline">{t('nav.newReport', lang)}</span>
-                      <ChevronDown size={14} className={cn('transition-transform', reportDropdownOpen && 'rotate-180')} />
-                    </button>
-                    {reportDropdownOpen && (
-                      <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-[#1a1640] rounded-xl border border-gray-200 dark:border-white/10 shadow-xl dark:shadow-purple-950/30 py-1 z-50">
-                        <Link href="/report" onClick={() => setReportDropdownOpen(false)} className={cn('flex items-center gap-2 px-4 py-2.5 text-sm transition-colors', pathname === '/report' ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-white/5')}>
-                          <PenLine size={14} /> {t('nav.manualReport', lang)}
-                        </Link>
-                        <Link href="/voice-report" onClick={() => setReportDropdownOpen(false)} className={cn('flex items-center gap-2 px-4 py-2.5 text-sm transition-colors', pathname === '/voice-report' ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-white/5')}>
-                          <Mic size={14} /> {t('nav.voiceReport', lang)}
-                        </Link>
-                        <Link href="/analyze-image" onClick={() => setReportDropdownOpen(false)} className={cn('flex items-center gap-2 px-4 py-2.5 text-sm transition-colors', pathname === '/analyze-image' ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-white/5')}>
-                          <ScanEye size={14} /> {t('nav.imageAnalysis', lang)}
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <Link
-                    href="/worker-report"
+                <div className="relative" data-report-dropdown>
+                  <button
+                    onClick={() => setReportDropdownOpen(o => !o)}
                     className={cn(
-                      'flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap',
-                      pathname === '/worker-report'
+                      'flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap',
+                      (pathname === '/report' || pathname === '/voice-report' || pathname === '/analyze-image')
                         ? 'bg-purple-50 text-purple-700 dark:bg-white/15 dark:text-white shadow-inner shadow-purple-500/10'
                         : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
                     )}
                   >
                     <PenLine size={16} />
                     <span className="hidden lg:inline">{t('nav.newReport', lang)}</span>
-                  </Link>
-                )}
+                    <ChevronDown size={14} className={cn('transition-transform', reportDropdownOpen && 'rotate-180')} />
+                  </button>
+                  {reportDropdownOpen && (
+                    <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-[#1a1640] rounded-xl border border-gray-200 dark:border-white/10 shadow-xl dark:shadow-purple-950/30 py-1 z-50">
+                      <Link href="/report" onClick={() => setReportDropdownOpen(false)} className={cn('flex items-center gap-2 px-4 py-2.5 text-sm transition-colors', pathname === '/report' ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-white/5')}>
+                        <PenLine size={14} /> {t('nav.manualReport', lang)}
+                      </Link>
+                      <Link href="/voice-report" onClick={() => setReportDropdownOpen(false)} className={cn('flex items-center gap-2 px-4 py-2.5 text-sm transition-colors', pathname === '/voice-report' ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-white/5')}>
+                        <Mic size={14} /> {t('nav.voiceReport', lang)}
+                      </Link>
+                      <Link href="/analyze-image" onClick={() => setReportDropdownOpen(false)} className={cn('flex items-center gap-2 px-4 py-2.5 text-sm transition-colors', pathname === '/analyze-image' ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-white/5')}>
+                        <ScanEye size={14} /> {t('nav.imageAnalysis', lang)}
+                      </Link>
+                    </div>
+                  )}
+                </div>
                 {/* Other nav items */}
                 {navItems.map((item: any) => {
                   const active = pathname === item.href;
@@ -332,39 +317,23 @@ export default function TopBar() {
               {user && (
                 <>
                   {/* New Report Dropdown in Mobile */}
-                  {user.role !== 'worker' ? (
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-400">
-                        <PenLine size={18} />
-                        <span>{t('nav.newReport', lang)}</span>
-                      </div>
-                      <div className="pl-8 space-y-1">
-                        <Link href="/report" onClick={() => setMobileOpen(false)} className={cn('flex items-center gap-2 px-3 py-2 rounded-lg text-sm', pathname === '/report' ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-white/5')}>
-                          <PenLine size={14} /> {t('nav.manualReport', lang)}
-                        </Link>
-                        <Link href="/voice-report" onClick={() => setMobileOpen(false)} className={cn('flex items-center gap-2 px-3 py-2 rounded-lg text-sm', pathname === '/voice-report' ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-white/5')}>
-                          <Mic size={14} /> {t('nav.voiceReport', lang)}
-                        </Link>
-                        <Link href="/analyze-image" onClick={() => setMobileOpen(false)} className={cn('flex items-center gap-2 px-3 py-2 rounded-lg text-sm', pathname === '/analyze-image' ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-white/5')}>
-                          <ScanEye size={14} /> {t('nav.imageAnalysis', lang)}
-                        </Link>
-                      </div>
-                    </div>
-                  ) : (
-                    <Link
-                      href="/worker-report"
-                      onClick={() => setMobileOpen(false)}
-                      className={cn(
-                        'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
-                        pathname === '/worker-report'
-                          ? 'bg-purple-50 text-purple-700 dark:bg-white/15 dark:text-white'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
-                      )}
-                    >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-400">
                       <PenLine size={18} />
                       <span>{t('nav.newReport', lang)}</span>
-                    </Link>
-                  )}
+                    </div>
+                    <div className="pl-8 space-y-1">
+                      <Link href="/report" onClick={() => setMobileOpen(false)} className={cn('flex items-center gap-2 px-3 py-2 rounded-lg text-sm', pathname === '/report' ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-white/5')}>
+                        <PenLine size={14} /> {t('nav.manualReport', lang)}
+                      </Link>
+                      <Link href="/voice-report" onClick={() => setMobileOpen(false)} className={cn('flex items-center gap-2 px-3 py-2 rounded-lg text-sm', pathname === '/voice-report' ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-white/5')}>
+                        <Mic size={14} /> {t('nav.voiceReport', lang)}
+                      </Link>
+                      <Link href="/analyze-image" onClick={() => setMobileOpen(false)} className={cn('flex items-center gap-2 px-3 py-2 rounded-lg text-sm', pathname === '/analyze-image' ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-white/5')}>
+                        <ScanEye size={14} /> {t('nav.imageAnalysis', lang)}
+                      </Link>
+                    </div>
+                  </div>
                   {/* Other nav items */}
                   {navItems.map((item: any) => {
                     const active = pathname === item.href;
