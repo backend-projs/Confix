@@ -62,23 +62,27 @@ export async function optionalAuth(req: AuthRequest, _res: Response, next: NextF
   if (parts.length < 2) return next();
 
   const userId = parts[0];
-  const { data: user } = await supabase
-    .from('users')
-    .select('id, role, company_id, full_name, email, worker_id, status, team, position')
-    .eq('id', userId)
-    .single();
+  try {
+    const { data: user } = await supabase
+      .from('users')
+      .select('id, role, company_id, full_name, email, worker_id, status, team, position')
+      .eq('id', userId)
+      .single();
 
-  if (user && user.status === 'active') {
-    req.user = {
-      id: user.id,
-      role: user.role,
-      company_id: user.company_id,
-      full_name: user.full_name,
-      email: user.email,
-      worker_id: user.worker_id,
-      team: user.team,
-      position: user.position,
-    };
+    if (user && user.status === 'active') {
+      req.user = {
+        id: user.id,
+        role: user.role,
+        company_id: user.company_id,
+        full_name: user.full_name,
+        email: user.email,
+        worker_id: user.worker_id,
+        team: user.team,
+        position: user.position,
+      };
+    }
+  } catch (e) {
+    // Invalid token - continue as anonymous
   }
   next();
 }
