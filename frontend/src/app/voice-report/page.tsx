@@ -5,6 +5,7 @@ import { Mic, MicOff, AlertCircle, RefreshCw, Send, Loader2, CheckCircle2 } from
 import { cn } from '@/lib/utils';
 import { useAppContext } from '@/context/AppContext';
 import { t, LANG_OPTIONS } from '@/lib/i18n';
+import { createReport } from '@/lib/api';
 
 const PROBLEM_TYPES = ['Bug', 'UI Issue', 'Performance', 'Feature Request', 'Infrastructure', 'Safety Hazard', 'Other'];
 
@@ -188,8 +189,25 @@ export default function VoiceReportPage() {
     }
   };
 
-  const handleSubmit = () => {
-    setState('submitted');
+  const handleSubmit = async () => {
+    setState('processing');
+    try {
+      await createReport({
+        assetName: 'Voice Report Asset',
+        assetType: 'Other',
+        locationName: 'Unknown',
+        issueType: problemType || 'Other',
+        description: (problem ? problem + '\n\n' : '') + description,
+        impact: 3,
+        likelihood: 3,
+        visibilityLevel: 'Internal',
+      });
+      setState('submitted');
+    } catch (err: any) {
+      console.error('Failed to create voice report:', err);
+      setError(err.message || 'Failed to submit report');
+      setState('filled');
+    }
   };
 
   const handleReset = () => {
