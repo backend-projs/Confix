@@ -1,4 +1,11 @@
 {
+  "app\\analyze-image\\page.tsx -> @/components/LocationPicker": {
+    "id": "app\\analyze-image\\page.tsx -> @/components/LocationPicker",
+    "files": [
+      "static/css/_app-pages-browser_src_components_LocationPicker_tsx.css",
+      "static/chunks/_app-pages-browser_src_components_LocationPicker_tsx.js"
+    ]
+  },
   "app\\report\\page.tsx -> @/components/LocationPicker": {
     "id": "app\\report\\page.tsx -> @/components/LocationPicker",
     "files": [

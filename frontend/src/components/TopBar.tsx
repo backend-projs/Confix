@@ -25,9 +25,21 @@ export default function TopBar() {
   const router = useRouter();
   const { selectedCompany, setSelectedCompany, selectedRole, setSelectedRole, lang, setLang, theme, toggleTheme, user, logout } = useAppContext();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [reportDropdownOpen, setReportDropdownOpen] = useState(false);
 
-  // Close mobile menu on route change
-  useEffect(() => { setMobileOpen(false); }, [pathname]);
+  // Close mobile menu and dropdown on route change
+  useEffect(() => { setMobileOpen(false); setReportDropdownOpen(false); }, [pathname]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!reportDropdownOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('[data-report-dropdown]')) setReportDropdownOpen(false);
+    };
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, [reportDropdownOpen]);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -35,9 +47,6 @@ export default function TopBar() {
     else document.body.style.overflow = '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
-
-  // Dropdown state for New Report
-  const [reportDropdownOpen, setReportDropdownOpen] = useState(false);
 
   // Build nav items based on role
   const navItems = [...baseNavItems];
@@ -71,8 +80,9 @@ export default function TopBar() {
               <>
                 {/* New Report Dropdown */}
                 {user.role !== 'worker' ? (
-                  <div className="relative" onMouseEnter={() => setReportDropdownOpen(true)} onMouseLeave={() => setReportDropdownOpen(false)}>
+                  <div className="relative" data-report-dropdown>
                     <button
+                      onClick={() => setReportDropdownOpen(o => !o)}
                       className={cn(
                         'flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap',
                         (pathname === '/report' || pathname === '/voice-report' || pathname === '/analyze-image')
