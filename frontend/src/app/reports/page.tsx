@@ -55,17 +55,17 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#302b63] to-[#0f172a] p-6">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#302b63] to-[#0f172a] p-4 sm:p-6">
         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="relative z-10">
-          <h1 className="text-2xl font-bold text-white">{t('reports.title', lang)}</h1>
-          <p className="text-purple-300/70 text-sm mt-1">{t('reports.subtitle', lang)}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-white">{t('reports.title', lang)}</h1>
+          <p className="text-purple-300/70 text-xs sm:text-sm mt-1">{t('reports.subtitle', lang)}</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-[#16162a] rounded-xl border border-white/5 p-4 flex flex-wrap gap-3 items-center">
-        <div className="relative flex-1 min-w-[200px]">
+      <div className="bg-[#16162a] rounded-xl border border-white/5 p-3 sm:p-4 flex flex-wrap gap-2 sm:gap-3 items-center">
+        <div className="relative flex-1 min-w-[160px] sm:min-w-[200px]">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder={t('reports.searchPlaceholder', lang)} className="w-full pl-9 pr-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" />
         </div>
@@ -76,7 +76,7 @@ export default function ReportsPage() {
           { key: 'riskLevel', label: 'Risk Level', opts: ['Low', 'Medium', 'High', 'Critical'] },
           { key: 'visibilityLevel', label: 'Visibility', opts: ['Internal', 'Restricted', 'Critical'] },
         ].map(f => (
-          <select key={f.key} value={(filters as any)[f.key]} onChange={e => setFilters(prev => ({ ...prev, [f.key]: e.target.value }))} className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+          <select key={f.key} value={(filters as any)[f.key]} onChange={e => setFilters(prev => ({ ...prev, [f.key]: e.target.value }))} className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500 flex-shrink-0">
             <option value="" className="bg-slate-900">{f.label}</option>
             {f.opts.map(o => <option key={o} value={o} className="bg-slate-900">{o}</option>)}
           </select>
@@ -123,7 +123,7 @@ export default function ReportsPage() {
       {/* Detail Modal */}
       {selectedReport && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => setSelectedReport(null)}>
-          <div className="bg-[#1a1a2e] rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 space-y-4 border border-white/10" onClick={e => e.stopPropagation()}>
+          <div className="bg-[#1a1a2e] rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-4 sm:p-6 space-y-4 border border-white/10 mx-2 sm:mx-0" onClick={e => e.stopPropagation()}>
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="text-lg font-bold text-white">{selectedReport.asset_name}</h2>
@@ -132,7 +132,7 @@ export default function ReportsPage() {
               <button onClick={() => setSelectedReport(null)} className="text-slate-500 hover:text-white"><X size={20} /></button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
               <div><span className="font-semibold text-slate-400">{t('reports.assetType', lang)}:</span> <span className="text-slate-200">{selectedReport.asset_type}</span></div>
               <div><span className="font-semibold text-slate-400">{t('reports.issueType', lang)}:</span> <span className="text-slate-200">{selectedReport.issue_type}</span></div>
               <div><span className="font-semibold text-slate-400">{t('reports.status', lang)}:</span> <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(selectedReport.status)}`}>{selectedReport.status}</span></div>

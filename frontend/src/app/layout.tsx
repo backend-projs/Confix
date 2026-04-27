@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-[#0e0e1a] text-gray-100 min-h-screen">
         <AppProvider>
           <TopBar />
-          <main className="p-6 max-w-[1440px] mx-auto">{children}</main>
+          <main className="px-3 py-4 sm:p-6 max-w-[1440px] mx-auto">{children}</main>
         </AppProvider>
       </body>
     </html>

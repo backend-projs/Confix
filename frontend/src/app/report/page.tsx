@@ -106,18 +106,18 @@ export default function NewReportPage() {
   );
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#302b63] to-[#0f172a] p-6">
+    <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#302b63] to-[#0f172a] p-4 sm:p-6">
         <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="relative z-10">
-          <h1 className="text-2xl font-bold text-white">{t('report.title', lang)}</h1>
-          <p className="text-purple-300/70 text-sm mt-1">{t('report.subtitle', lang)}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-white">{t('report.title', lang)}</h1>
+          <p className="text-purple-300/70 text-xs sm:text-sm mt-1">{t('report.subtitle', lang)}</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* A: Asset Information */}
-        <div className="bg-[#16162a] rounded-xl border border-white/5 p-5 space-y-4">
+        <div className="bg-[#16162a] rounded-xl border border-white/5 p-3 sm:p-5 space-y-4">
           <h2 className="font-semibold text-purple-300 border-b border-white/5 pb-2">{t('report.assetInfo', lang)}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -147,7 +147,7 @@ export default function NewReportPage() {
             <label className="block text-sm font-medium text-slate-400 mb-2 flex items-center gap-1.5">
               <MapPin size={14} /> {t('report.selectLocation', lang)}
             </label>
-            <div className="h-56 rounded-lg overflow-hidden border border-white/10">
+            <div className="h-44 sm:h-56 rounded-lg overflow-hidden border border-white/10">
               <LocationPicker
                 onSelect={handleLocationSelect}
                 lat={form.latitude ? parseFloat(form.latitude) : undefined}
@@ -163,7 +163,7 @@ export default function NewReportPage() {
         </div>
 
         {/* B: Issue Details */}
-        <div className="bg-[#16162a] rounded-xl border border-white/5 p-5 space-y-4">
+        <div className="bg-[#16162a] rounded-xl border border-white/5 p-3 sm:p-5 space-y-4">
           <h2 className="font-semibold text-blue-300 border-b border-white/5 pb-2">{t('report.issueDetails', lang)}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -220,7 +220,7 @@ export default function NewReportPage() {
         </div>
 
         {/* C: AI Assistant */}
-        <div className="bg-[#16162a] rounded-xl border border-white/5 p-5 space-y-4">
+        <div className="bg-[#16162a] rounded-xl border border-white/5 p-3 sm:p-5 space-y-4">
           <h2 className="font-semibold text-indigo-300 border-b border-white/5 pb-2 flex items-center gap-2"><Bot size={18} className="text-indigo-400" /> {t('report.aiAssistant', lang)}</h2>
           <button type="button" onClick={handleAI} disabled={aiLoading || !form.description} className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 flex items-center gap-2 transition-all">
             {aiLoading ? <Loader2 size={16} className="animate-spin" /> : <Bot size={16} />}
@@ -239,7 +239,7 @@ export default function NewReportPage() {
         </div>
 
         {/* D: Risk Assessment — label-only, no numbers */}
-        <div className="bg-[#16162a] rounded-xl border border-white/5 p-5 space-y-4">
+        <div className="bg-[#16162a] rounded-xl border border-white/5 p-3 sm:p-5 space-y-4">
           <h2 className="font-semibold text-rose-300 border-b border-white/5 pb-2 flex items-center gap-2"><AlertTriangle size={18} className="text-rose-400" /> {t('report.riskAssessment', lang)}</h2>
           <p className="text-xs text-slate-500">{t('report.riskSubtitle', lang)}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

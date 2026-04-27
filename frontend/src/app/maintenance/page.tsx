@@ -59,11 +59,11 @@ export default function MaintenancePage() {
 
   return (
     <div className="space-y-4">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#302b63] to-[#0f172a] p-6">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#302b63] to-[#0f172a] p-4 sm:p-6">
         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="relative z-10">
-          <h1 className="text-2xl font-bold flex items-center gap-2 text-white"><Wrench size={24} /> {t('maint.title', lang)}</h1>
-          <p className="text-purple-300/70 text-sm mt-1">{t('maint.subtitle', lang)}</p>
+          <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2 text-white"><Wrench size={22} /> {t('maint.title', lang)}</h1>
+          <p className="text-purple-300/70 text-xs sm:text-sm mt-1">{t('maint.subtitle', lang)}</p>
         </div>
       </div>
 
@@ -78,10 +78,10 @@ export default function MaintenancePage() {
       ) : (
         <div className="grid gap-4">
           {reports.map((r: any) => (
-            <div key={r.id} className="bg-[#16162a] rounded-xl border border-white/5 p-4 hover:border-purple-500/20 transition-colors">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-1">
+            <div key={r.id} className="bg-[#16162a] rounded-xl border border-white/5 p-3 sm:p-4 hover:border-purple-500/20 transition-colors">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
                     <span className="font-semibold text-white">{r.asset_name}</span>
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${getRiskColor(r.risk_level)}`}>{r.risk_level}</span>
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusColor(r.status)}`}>{r.status}</span>
@@ -90,7 +90,7 @@ export default function MaintenancePage() {
                   <p className="text-xs text-slate-500 mt-1">Created {formatDate(r.created_at)} · Assigned to {r.assigned_team || 'Unassigned'}</p>
                 </div>
 
-                <div className="flex items-center gap-2 ml-4">
+                <div className="flex flex-wrap items-center gap-2 sm:ml-4">
                   {r.status !== 'Resolved' && (
                     <select
                       value={r.status}
@@ -113,7 +113,7 @@ export default function MaintenancePage() {
                 </div>
               </div>
 
-              <div className="mt-3 bg-white/[0.03] rounded-lg p-3 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-slate-400 border border-white/5">
+              <div className="mt-3 bg-white/[0.03] rounded-lg p-2.5 sm:p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 text-xs text-slate-400 border border-white/5">
                 <div><span className="font-semibold text-slate-300">{t('maint.ppe', lang)}:</span> {(r.required_ppe || []).join(', ')}</div>
                 <div><span className="font-semibold text-slate-300">{t('maint.minCrew', lang)}:</span> {r.minimum_crew}</div>
                 <div><span className="font-semibold text-slate-300">{t('maint.supervisor', lang)}:</span> {r.supervisor_approval_required ? t('reports.required', lang) : t('maint.notRequired', lang)}</div>

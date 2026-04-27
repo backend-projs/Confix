@@ -108,7 +108,7 @@ export default function VoiceReportPage() {
 
   const sendAudioToWhisper = async (audioBlob: Blob) => {
     try {
-      const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const API = process.env.NEXT_PUBLIC_API_URL;
       const formData = new FormData();
       formData.append('audio', audioBlob, 'recording.webm');
       formData.append('lang', speechCode);
@@ -150,7 +150,7 @@ export default function VoiceReportPage() {
   // Manual text mode still uses the old /parse endpoint
   const parseManualText = async (text: string) => {
     try {
-      const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const API = process.env.NEXT_PUBLIC_API_URL;
       const res = await fetch(`${API}/voice-report/parse`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -189,7 +189,6 @@ export default function VoiceReportPage() {
   };
 
   const handleSubmit = () => {
-    console.log('Report submitted:', { problem_type: problemType, problem, description });
     setState('submitted');
   };
 
@@ -225,8 +224,8 @@ export default function VoiceReportPage() {
   return (
     <div className="min-h-[calc(100vh-6rem)] flex flex-col items-center">
       {/* Header */}
-      <div className="w-full max-w-2xl mx-auto text-center pt-6 pb-4">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 via-violet-400 to-blue-400 bg-clip-text text-transparent">
+      <div className="w-full max-w-2xl mx-auto text-center pt-4 sm:pt-6 pb-3 sm:pb-4 px-2">
+        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 via-violet-400 to-blue-400 bg-clip-text text-transparent">
           {t('voice.title', lang)}
         </h1>
         <p className="text-slate-500 text-sm mt-1">{t('voice.subtitle', lang)}</p>
@@ -240,24 +239,24 @@ export default function VoiceReportPage() {
             {/* Outer pulsing rings */}
             {state === 'idle' && (
               <>
-                <div className="absolute w-56 h-56 rounded-full bg-purple-500/5 animate-ping" style={{ animationDuration: '3s' }} />
-                <div className="absolute w-48 h-48 rounded-full bg-purple-500/10 animate-ping" style={{ animationDuration: '2.5s', animationDelay: '0.5s' }} />
+                <div className="absolute w-44 h-44 sm:w-56 sm:h-56 rounded-full bg-purple-500/5 animate-ping" style={{ animationDuration: '3s' }} />
+                <div className="absolute w-40 h-40 sm:w-48 sm:h-48 rounded-full bg-purple-500/10 animate-ping" style={{ animationDuration: '2.5s', animationDelay: '0.5s' }} />
               </>
             )}
 
             {/* Listening animated rings */}
             {state === 'listening' && (
               <>
-                <div className="absolute w-48 h-48 rounded-full bg-purple-500/20 animate-ripple" />
-                <div className="absolute w-48 h-48 rounded-full bg-purple-500/15 animate-ripple" style={{ animationDelay: '0.5s' }} />
-                <div className="absolute w-48 h-48 rounded-full bg-violet-500/15 animate-ripple" style={{ animationDelay: '1s' }} />
-                <div className="absolute w-48 h-48 rounded-full bg-purple-400/10 animate-ripple" style={{ animationDelay: '1.5s' }} />
+                <div className="absolute w-40 h-40 sm:w-48 sm:h-48 rounded-full bg-purple-500/20 animate-ripple" />
+                <div className="absolute w-40 h-40 sm:w-48 sm:h-48 rounded-full bg-purple-500/15 animate-ripple" style={{ animationDelay: '0.5s' }} />
+                <div className="absolute w-40 h-40 sm:w-48 sm:h-48 rounded-full bg-violet-500/15 animate-ripple" style={{ animationDelay: '1s' }} />
+                <div className="absolute w-40 h-40 sm:w-48 sm:h-48 rounded-full bg-purple-400/10 animate-ripple" style={{ animationDelay: '1.5s' }} />
               </>
             )}
 
             {/* Processing spinner ring */}
             {state === 'processing' && (
-              <div className="absolute w-52 h-52 rounded-full border-4 border-transparent border-t-purple-500 animate-spin" />
+              <div className="absolute w-44 h-44 sm:w-52 sm:h-52 rounded-full border-4 border-transparent border-t-purple-500 animate-spin" />
             )}
 
             {/* Main button */}
@@ -269,7 +268,7 @@ export default function VoiceReportPage() {
               disabled={state === 'processing'}
               aria-label={state === 'listening' ? 'Release to stop recording' : state === 'processing' ? 'Processing your speech' : 'Press and hold to record'}
               className={cn(
-                'relative z-10 w-40 h-40 rounded-full flex flex-col items-center justify-center transition-all duration-300 select-none',
+                'relative z-10 w-32 h-32 sm:w-40 sm:h-40 rounded-full flex flex-col items-center justify-center transition-all duration-300 select-none',
                 'shadow-2xl shadow-purple-900/40',
                 state === 'idle' && 'bg-gradient-to-br from-[#7c3aed] via-[#6d28d9] to-[#4c1d95] hover:scale-105 active:scale-95 cursor-pointer',
                 state === 'listening' && 'bg-gradient-to-br from-[#a855f7] via-[#7c3aed] to-[#6d28d9] scale-110 animate-recording-glow',
@@ -277,11 +276,11 @@ export default function VoiceReportPage() {
               )}
             >
               {state === 'processing' ? (
-                <Loader2 size={48} className="text-white/80 animate-spin" />
+                <Loader2 size={36} className="text-white/80 animate-spin sm:w-12 sm:h-12" />
               ) : state === 'listening' ? (
-                <Mic size={48} className="text-white animate-pulse" />
+                <Mic size={36} className="text-white animate-pulse sm:w-12 sm:h-12" />
               ) : (
-                <Mic size={48} className="text-white/90" />
+                <Mic size={36} className="text-white/90 sm:w-12 sm:h-12" />
               )}
               <span className="text-white/70 text-xs mt-2 font-medium">
                 {state === 'processing' ? t('voice.analyzing', lang) : state === 'listening' ? t('voice.listening', lang) : t('voice.holdToSpeak', lang)}

@@ -61,7 +61,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-5">
       {/* Hero — compact */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#2d1b69] to-[#0f172a] px-7 py-5">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#2d1b69] to-[#0f172a] px-4 py-4 sm:px-7 sm:py-5">
         <div className="absolute top-0 right-0 w-72 h-72 bg-purple-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-white/[0.06] flex items-center justify-center">
@@ -75,12 +75,12 @@ export default function DashboardPage() {
       </div>
 
       {/* Stat Cards — monochrome purple gradient */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
         {statCards.map((s, i) => (
           <div key={s.label} className="rounded-xl bg-[#16162a] border border-white/[0.04] p-4 group hover:border-purple-500/10 transition-colors">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-2xl font-bold text-white">{s.value}</p>
+                <p className="text-xl sm:text-2xl font-bold text-white">{s.value}</p>
                 <p className="text-[11px] text-slate-500 mt-0.5">{s.label}</p>
               </div>
               <div className="w-8 h-8 rounded-lg bg-purple-500/[0.06] flex items-center justify-center">
@@ -92,9 +92,9 @@ export default function DashboardPage() {
       </div>
 
       {/* Row 1: charts 2-col + list 1-col */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:min-h-[280px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4">
         {/* Risk Donut */}
-        <div className="lg:col-span-3 bg-[#16162a] rounded-xl border border-white/[0.04] p-5 flex flex-col">
+        <div className="lg:col-span-3 bg-[#16162a] rounded-xl border border-white/[0.04] p-4 sm:p-5 flex flex-col min-h-[260px] lg:min-h-0">
           <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">{t('dashboard.riskDistribution', lang)}</h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
@@ -119,7 +119,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Reports by Company — bar */}
-        <div className="lg:col-span-5 bg-[#16162a] rounded-xl border border-white/[0.04] p-5 flex flex-col">
+        <div className="lg:col-span-5 bg-[#16162a] rounded-xl border border-white/[0.04] p-4 sm:p-5 flex flex-col min-h-[260px] lg:min-h-0">
           <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">{t('dashboard.reportsByCompany', lang)}</h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
@@ -140,7 +140,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Top Priority list */}
-        <div className="lg:col-span-4 bg-[#16162a] rounded-xl border border-white/[0.04] p-5">
+        <div className="lg:col-span-4 bg-[#16162a] rounded-xl border border-white/[0.04] p-4 sm:p-5">
           <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5"><AlertTriangle size={12} /> {t('dashboard.highestPriority', lang)}</h3>
           <div className="space-y-1.5">
             {topPriority.map((r: any, i: number) => (
@@ -160,9 +160,9 @@ export default function DashboardPage() {
       </div>
 
       {/* Row 2: area + asset breakdown + recent */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:min-h-[260px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4">
         {/* Status area chart */}
-        <div className="lg:col-span-5 bg-[#16162a] rounded-xl border border-white/[0.04] p-5 flex flex-col">
+        <div className="lg:col-span-5 bg-[#16162a] rounded-xl border border-white/[0.04] p-4 sm:p-5 flex flex-col min-h-[260px] lg:min-h-0">
           <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">{t('dashboard.statusOverview', lang)}</h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
@@ -183,7 +183,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Asset breakdown — horizontal bar */}
-        <div className="lg:col-span-3 bg-[#16162a] rounded-xl border border-white/[0.04] p-5 flex flex-col">
+        <div className="lg:col-span-3 bg-[#16162a] rounded-xl border border-white/[0.04] p-4 sm:p-5 flex flex-col min-h-[260px] lg:min-h-0">
           <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">{t('dashboard.assetTypes', lang)}</h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
@@ -204,7 +204,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Reports */}
-        <div className="lg:col-span-4 bg-[#16162a] rounded-xl border border-white/[0.04] p-5">
+        <div className="lg:col-span-4 bg-[#16162a] rounded-xl border border-white/[0.04] p-4 sm:p-5">
           <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5"><ArrowUpRight size={12} /> {t('dashboard.latestReports', lang)}</h3>
           <div className="space-y-1.5">
             {recent.map((r: any) => (

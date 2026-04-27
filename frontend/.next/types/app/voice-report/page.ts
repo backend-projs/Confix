@@ -1,4 +1,4 @@
-// File: C:\Users\ElcanAliyev\OneDrive\Desktop\azconion\Confix\frontend\src\app\voice-report\page.tsx
+// File: C:\Users\ehmed\OneDrive\Masaüstü\AZCON\Confix8\Confix\frontend\src\app\voice-report\page.tsx
 import * as entry from '../../../../src/app/voice-report/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

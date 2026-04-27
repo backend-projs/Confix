@@ -62,11 +62,11 @@ export default function GovernancePage() {
 
   return (
     <div className="space-y-6">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#302b63] to-[#0f172a] p-6">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#302b63] to-[#0f172a] p-4 sm:p-6">
         <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="relative z-10">
-          <h1 className="text-2xl font-bold flex items-center gap-2 text-white"><Shield size={24} /> {t('gov.title', lang)}</h1>
-          <p className="text-purple-300/70 text-sm mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2 text-white"><Shield size={22} /> {t('gov.title', lang)}</h1>
+          <p className="text-purple-300/70 text-xs sm:text-sm mt-1">
             {t('gov.subtitle', lang)}
           </p>
         </div>
@@ -82,9 +82,9 @@ export default function GovernancePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5">
         {sections.map((s) => (
-          <div key={s.title} className="bg-[#16162a] rounded-xl border border-white/5 p-5 space-y-3 hover:border-purple-500/20 transition-colors">
+          <div key={s.title} className="bg-[#16162a] rounded-xl border border-white/5 p-4 sm:p-5 space-y-3 hover:border-purple-500/20 transition-colors">
             <div className="flex items-center gap-2">
               <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 p-2 rounded-lg"><s.icon size={18} className="text-purple-400" /></div>
               <h3 className="font-semibold text-white">{s.title}</h3>

@@ -76,6 +76,20 @@ export async function fetchStats() {
   return res.json();
 }
 
+export async function analyzeImage(file: File): Promise<any> {
+  const formData = new FormData();
+  formData.append('image', file);
+  const res = await fetch(`${API}/analyze-image`, {
+    method: 'POST',
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Image analysis failed' }));
+    throw new Error(err.error || 'Image analysis failed');
+  }
+  return res.json();
+}
+
 export async function voiceReportParse(transcript: string) {
   const res = await fetch(`${API}/voice-report/parse`, {
     method: 'POST',

@@ -39,7 +39,9 @@ Confix/
 │   │   └── routes/
 │   │       ├── reports.ts    # CRUD for reports
 │   │       ├── assistant.ts  # POST /api/assistant — mock AI suggestions
-│   │       └── stats.ts      # GET /api/stats — dashboard statistics
+│   │       ├── stats.ts      # GET /api/stats — dashboard statistics
+│   │       ├── voiceReport.ts  # POST /api/voice-report/* — audio transcription + AI parsing
+│   │       └── analyzeImage.ts # POST /api/analyze-image — vision AI + EXIF extraction
 ├── frontend/
 │   ├── .env.local            # NEXT_PUBLIC_API_URL
 │   ├── src/
@@ -47,12 +49,14 @@ Confix/
 │   │   │   ├── layout.tsx        # Root layout: AppProvider + TopBar, dark bg #0e0e1a
 │   │   │   ├── page.tsx          # Redirect to /dashboard
 │   │   │   ├── globals.css       # Minimal global styles
-│   │   │   ├── dashboard/page.tsx # Operations Dashboard with charts & stats
-│   │   │   ├── report/page.tsx    # New Field Report form (map picker, image EXIF, AI)
-│   │   │   ├── reports/page.tsx   # Reports list with search/filter + role-based access
-│   │   │   ├── maintenance/page.tsx # Maintenance tasks with status updates
-│   │   │   ├── map/page.tsx       # Interactive map with report markers + zoom
-│   │   │   └── governance/page.tsx # Data governance principles
+│   │   │   ├── dashboard/page.tsx      # Operations Dashboard with charts & stats
+│   │   │   ├── report/page.tsx         # New Field Report form (map picker, image EXIF, AI)
+│   │   │   ├── reports/page.tsx        # Reports list with search/filter + role-based access
+│   │   │   ├── maintenance/page.tsx    # Maintenance tasks with status updates
+│   │   │   ├── map/page.tsx            # Interactive map with report markers + zoom
+│   │   │   ├── voice-report/page.tsx   # Voice-to-report: record/type → AI parse → submit
+│   │   │   ├── analyze-image/page.tsx  # Image AI: upload/camera → vision AI → EXIF → report
+│   │   │   └── governance/page.tsx     # Data governance principles
 │   │   ├── components/
 │   │   │   ├── TopBar.tsx         # Horizontal nav bar (replaced sidebar)
 │   │   │   ├── MapView.tsx        # Leaflet map with markers, hazard zones, flyTo zoom
@@ -87,7 +91,7 @@ npm run dev    # Runs both backend (port 5000) and frontend (port 3000) via conc
 
 ### Navigation
 - Horizontal top bar (`TopBar.tsx`) with gradient background
-- Icons: `Gauge`, `PenLine`, `ClipboardList`, `HardHat`, `Globe2`, `BookLock`
+- Icons: `Gauge`, `PenLine`, `ClipboardList`, `HardHat`, `Globe2`, `Mic`, `ScanEye`, `BookLock`
 - Company & role selectors in the top-right
 - Active link: `bg-white/15 text-white`
 
@@ -161,25 +165,45 @@ The Reports page (`reports/page.tsx`) checks `selectedRole === 'Field Engineer'`
 | POST | `/api/reports/:id/emergency-alert` | Trigger emergency alert |
 | POST | `/api/assistant` | Get AI suggestions (mock — uses keyword matching, no real AI) |
 | GET | `/api/stats` | Dashboard statistics |
+| POST | `/api/voice-report/transcribe-and-parse` | Upload audio → Groq Whisper transcription → LLM field extraction |
+| POST | `/api/voice-report/parse-text` | Manual text input → LLM field extraction |
+| POST | `/api/analyze-image` | Upload image → EXIF extraction (exifr) → Vision AI analysis (Groq/OpenRouter) |
 
 ---
 
-## 9. AI Assistant — Current State
+## 9. AI Features
 
-**The AI assistant is a mock implementation.** It does NOT use any real AI/LLM API.
-
+### Mock AI Assistant (Report Form)
 - Located in `backend/src/utils.ts` → `mockAssistant()` function
-- Uses simple keyword matching on the description text (e.g., "crack" → Asphalt Crack)
+- Uses simple keyword matching on the description text
 - Returns hardcoded suggestions based on asset type
-- To make it real, you would need to:
-  1. Add an `OPENAI_API_KEY` (or other LLM key) to `backend/.env`
-  2. Replace `mockAssistant()` in `backend/src/routes/assistant.ts` with an actual API call
-  3. The frontend code (`report/page.tsx`) already handles the response correctly — no frontend changes needed
+- Called from `POST /api/assistant`
 
-**Note**: The mock assistant DOES work — it returns keyword-based suggestions. If it appears broken, check:
-- Backend is running on port 5000
-- CORS allows `http://localhost:3000`
-- The description field is not empty (button is disabled when empty)
+### Voice Report (`voice-report/page.tsx`)
+- Record audio or type text → backend transcribes (Groq Whisper) → LLM extracts report fields
+- Uses Groq as primary, OpenRouter as fallback
+- Frontend displays parsed fields for review → user submits as report
+
+### Image Analysis (`analyze-image/page.tsx`)
+- **Upload/Camera**: Drag-drop, file picker, or device camera capture
+- **EXIF Extraction**: Backend uses `exifr` to parse GPS coordinates + DateTimeOriginal from image metadata
+- **Vision AI**: Image sent as base64 to Groq (`llama-4-scout-17b-16e-instruct`) primary, OpenRouter fallback (tries `gemini-2.5-flash`, `gemini-2.0-flash-001`, `gemini-2.0-flash-exp:free`)
+- **System Prompt**: Infrastructure Forensic AI — classifies assets, diagnoses defects, extracts OCR text
+- **Output**: Structured JSON with metadata, asset, diagnostics, spatial_context, exif
+- **Report Creation Flow**:
+  1. View AI analysis results + EXIF data card
+  2. Click "Create Report" → **Location Step** (mandatory):
+     - Auto-fills from EXIF GPS if available (backend + client-side extraction)
+     - Otherwise: "Use My GPS" (browser geolocation) or "Select on Map" (interactive map)
+     - User confirms location before proceeding
+  3. Report form pre-filled from AI (asset type, issue type, description, severity→impact)
+  4. User fills remaining fields (company, location name, likelihood, createdBy)
+  5. Submit → `POST /api/reports` → redirect to Reports
+
+### Environment Variables for AI
+- `GROQ_API_KEY` — Groq API (Whisper + LLaMA vision)
+- `OPENROUTER_API_KEY` — OpenRouter API (Gemini vision fallback)
+- Both defined in `backend/.env`
 
 ---
 
@@ -195,8 +219,9 @@ The Reports page (`reports/page.tsx`) checks `selectedRole === 'Field Engineer'`
 
 1. `Sidebar.tsx` still exists in `components/` but is unused — can be safely deleted
 2. TypeScript lint warning on `LocationPicker` dynamic import (`IntrinsicAttributes`) — works at runtime, caused by `next/dynamic` type stripping
-3. The AI assistant uses mock data — needs real LLM integration for production
+3. The mock AI assistant (`/api/assistant`) uses keyword matching — real LLM integration exists only in voice report and image analysis
 4. Risk color utility functions in `utils.ts` still use light-themed colors (e.g., `bg-red-100 text-red-800`) which may not look perfect on dark backgrounds — consider dark variants
+5. Camera capture (canvas-based) does not embed EXIF metadata — EXIF GPS only works with uploaded photos from devices
 
 ---
 
@@ -218,7 +243,21 @@ The Reports page (`reports/page.tsx`) checks `selectedRole === 'Field Engineer'`
 ### Map
 - Added `focusReport` prop to `MapView` — `FlyToReport` component uses `map.flyTo()` to zoom to selected report
 
+### Voice Report (NEW)
+- Full voice-to-report pipeline: record audio → Groq Whisper → LLM field extraction
+- Manual text input option as alternative
+- Parsed fields displayed for review before submission
+
+### Image Analysis (NEW)
+- Upload or camera capture → EXIF GPS extraction (backend `exifr`) → Vision AI analysis
+- Analysis result cards: Metadata, EXIF Data, Asset, Diagnostics, Spatial Context
+- Report creation flow with mandatory location step (EXIF → GPS → Map)
+- Pre-fills report form from AI output (asset type, defect→issue type, severity→impact)
+- Groq primary + OpenRouter multi-model fallback
+- i18n support: EN, RU, AZ
+
 ### All Pages
 - Dark theme: `#0e0e1a` body, `#16162a` cards, purple gradient headers
-- TopBar replaced sidebar as horizontal navigation
+- TopBar replaced sidebar as horizontal navigation (added Voice Report + Image AI links)
 - Field Engineers blocked from Reports page
+- Full i18n translations for all new features
