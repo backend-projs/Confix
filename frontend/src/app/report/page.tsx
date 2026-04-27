@@ -204,12 +204,18 @@ export default function NewReportPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.createdBy', lang)} *</label>
-              <input required value={form.createdBy} onChange={e => setForm(f => ({ ...f, createdBy: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Your name" />
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1 flex items-center justify-between">
+                <span>{t('report.createdBy', lang)} *</span>
+                {user && <span className="text-[10px] bg-purple-500/10 text-purple-600 dark:text-purple-400 px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider">Auto-filled</span>}
+              </label>
+              <input required value={form.createdBy} onChange={e => setForm(f => ({ ...f, createdBy: e.target.value }))} readOnly={!!user} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 read-only:opacity-70 read-only:cursor-default" placeholder="Your name" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.assignedTeam', lang)}</label>
-              <input value={form.assignedTeam} onChange={e => setForm(f => ({ ...f, assignedTeam: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Road Crew B" />
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1 flex items-center justify-between">
+                <span>{t('report.assignedTeam', lang)}</span>
+                {user && <span className="text-[10px] bg-purple-500/10 text-purple-600 dark:text-purple-400 px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider">Auto-filled</span>}
+              </label>
+              <input value={form.assignedTeam} onChange={e => setForm(f => ({ ...f, assignedTeam: e.target.value }))} readOnly={!!user} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 read-only:opacity-70 read-only:cursor-default" placeholder="e.g. Road Crew B" />
             </div>
           </div>
         </div>
