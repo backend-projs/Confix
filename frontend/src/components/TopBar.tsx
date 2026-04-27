@@ -52,9 +52,7 @@ export default function TopBar() {
   // Build nav items based on role
   const navItems = [...baseNavItems];
   // New Report dropdown is handled separately, not in navItems array
-  if (user?.role === 'admin') {
-    navItems.push({ href: '/admin/workers', tKey: 'nav.workers', icon: Users });
-  }
+
 
   const showLegacySelectors = !user && pathname !== '/login';
 
@@ -380,13 +378,35 @@ export default function TopBar() {
             {/* Mobile selectors / signout */}
             <div className="px-4 py-4 mt-2 border-t border-gray-200 dark:border-white/5 space-y-4">
               {user && (
-                <button
-                  onClick={() => { logout(); router.push('/login'); setMobileOpen(false); }}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300"
-                >
-                  <LogOut size={16} />
-                  <span>Sign Out</span>
-                </button>
+                <div className="space-y-2">
+                  {user.role === 'admin' && (
+                    <Link
+                      href="/admin/workers"
+                      onClick={() => setMobileOpen(false)}
+                      className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-blue-50 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
+                    >
+                      <UserCog size={16} />
+                      <span>Admin</span>
+                    </Link>
+                  )}
+                  {user.role === 'superadmin' && (
+                    <Link
+                      href="/superadmin"
+                      onClick={() => setMobileOpen(false)}
+                      className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300"
+                    >
+                      <Shield size={16} />
+                      <span>Superadmin</span>
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => { logout(); router.push('/login'); setMobileOpen(false); }}
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gray-100 text-gray-700 dark:bg-white/5 dark:text-slate-300 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400 transition-colors"
+                  >
+                    <LogOut size={16} />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
               )}
               {showLegacySelectors && (
                 <>
