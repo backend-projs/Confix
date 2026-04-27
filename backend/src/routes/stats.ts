@@ -1,13 +1,38 @@
-import { Router, Request, Response } from 'express';
+import { Router, Response } from 'express';
 import { supabase } from '../supabaseClient';
+import { AuthRequest, optionalAuth } from '../middleware/auth';
 
 export const statsRouter = Router();
 
-statsRouter.get('/', async (_req: Request, res: Response) => {
+statsRouter.get('/', optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
-    const { data: reports, error } = await supabase
-      .from('reports')
-      .select('*');
+    let query = supabase.from('reports').select('*');
+
+    // Tenant scoping: admins/workers see only their company; superadmin sees all
+    if (req.user) {
+      if (req.user.role === 'admin' || req.user.role === 'worker') {
+        if (!req.user.company_id) {
+          return res.json({
+            totalReports: 0, criticalReports: 0, highRiskReports: 0,
+            pendingMaintenance: 0, activeHazardZones: 0,
+            safetyChecklistsPending: 0, supervisorReviewsPending: 0,
+            averageRiskMatrixScore: 0,
+            riskDistribution: [], assetTypeBreakdown: [],
+            statusDistribution: [], reportsByCompany: [],
+          });
+        }
+        query = query.eq('company_id', req.user.company_id);
+      }
+      // Workers further restricted to their own reports
+      if (req.user.role === 'worker') {
+        query = query.eq('worker_id', req.user.id);
+      }
+    } else {
+      // Unauthenticated: return empty stats (frontend AuthGuard prevents this anyway)
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { data: reports, error } = await query;
 
     if (error) return res.status(500).json({ error: error.message });
     if (!reports) return res.json({});

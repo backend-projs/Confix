@@ -9,7 +9,7 @@ import { t, LANG_OPTIONS } from '@/lib/i18n';
 import {
   Gauge, PenLine, ClipboardList, HardHat, Globe2, BookLock,
   Building, UserCog, Menu, X, Sun, Moon, ChevronDown, Mic, ScanEye,
-  LogIn, LogOut, Shield, Users,
+  LogIn, LogOut, Shield, Users, FileText,
 } from 'lucide-react';
 import NotificationsBell from './NotificationsBell';
 
@@ -223,6 +223,18 @@ export default function TopBar() {
             {/* Notifications Bell */}
             {user && <NotificationsBell />}
 
+            {/* API Docs */}
+            <a
+              href="https://confix-jocy.onrender.com/api-docs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5 transition-colors"
+              title="API Documentation"
+            >
+              <FileText size={14} />
+              <span className="hidden xl:inline">API</span>
+            </a>
+
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -371,6 +383,16 @@ export default function TopBar() {
                   <span>Sign In</span>
                 </Link>
               )}
+              {/* API Docs - Mobile */}
+              <a
+                href="https://confix-jocy.onrender.com/api-docs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5 transition-all"
+              >
+                <FileText size={18} />
+                <span>API Docs</span>
+              </a>
             </nav>
 
             {/* Mobile selectors / signout */}

@@ -8,7 +8,7 @@ import {
   createAuditEvent,
   appendAuditEvent,
 } from '../utils';
-import { AuthRequest, authMiddleware, optionalAuth, requireCompanyAccess } from '../middleware/auth';
+import { AuthRequest, authMiddleware, requireCompanyAccess } from '../middleware/auth';
 
 export const reportsRouter = Router();
 
@@ -24,14 +24,11 @@ function enforceTenantScope(req: AuthRequest, query: any) {
 }
 
 // GET /api/reports
-reportsRouter.get('/', optionalAuth, async (req: AuthRequest, res: Response) => {
+reportsRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     let query = supabase.from('reports').select('*');
-
-    // If authenticated, enforce tenant scope
-    if (req.user) {
-      query = enforceTenantScope(req, query);
-    }
+    // Always enforce tenant scope (auth guaranteed by authMiddleware)
+    query = enforceTenantScope(req, query);
 
     const { status, riskLevel, assetType, issueType, visibilityLevel, search } = req.query;
 
