@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}"
+self.__REACT_LOADABLE_MANIFEST="{\"app\\\\report\\\\page.tsx -> @/components/LocationPicker\":{\"id\":\"app\\\\report\\\\page.tsx -> @/components/LocationPicker\",\"files\":[\"static/css/_app-pages-browser_src_components_LocationPicker_tsx.css\",\"static/chunks/_app-pages-browser_src_components_LocationPicker_tsx.js\"]}}"

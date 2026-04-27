@@ -547,6 +547,9 @@ video {
 .top-1\/2 {
   top: 50%;
 }
+.top-full {
+  top: 100%;
+}
 .z-0 {
   z-index: 0;
 }
@@ -791,6 +794,9 @@ video {
 }
 .w-full {
   width: 100%;
+}
+.w-48 {
+  width: 12rem;
 }
 .min-w-0 {
   min-width: 0px;
@@ -1586,6 +1592,9 @@ video {
 }
 .pt-4 {
   padding-top: 1rem;
+}
+.pl-8 {
+  padding-left: 2rem;
 }
 .text-left {
   text-align: left;
@@ -2461,6 +2470,10 @@ body {
 }
 .dark\:bg-yellow-500\/20:is(.dark *) {
   background-color: rgb(234 179 8 / 0.2);
+}
+.dark\:bg-\[\#1a1640\]:is(.dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(26 22 64 / var(--tw-bg-opacity, 1));
 }
 .dark\:bg-gradient-to-b:is(.dark *) {
   background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
