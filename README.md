@@ -91,3 +91,12 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api
 - **Worker safety first** — PPE, crew requirements, supervisor approval gates enforced by risk level
 - **Audit trail** — Every action timestamped and attributed in immutable JSONB log
 - **Data sovereignty** — Multi-tenant separation, visibility-based access, coordinate masking for critical data
+
+super-admin login: su@confix.io
+password: superadmin123
+
+admin login: john@confix.io
+password: admin1
+
+worker login: 54321
+password: 123456
