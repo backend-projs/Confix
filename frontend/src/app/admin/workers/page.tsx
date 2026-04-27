@@ -209,7 +209,7 @@ export default function AdminWorkersPage() {
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 dark:text-slate-400 mb-1">Password *</label>
-              <input type="password" required value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Min 6 characters" />
+              <input type="password" required autocomplete="new-password" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Min 6 characters" />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 dark:text-slate-400 mb-1">Assigned Asset</label>

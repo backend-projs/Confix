@@ -85,7 +85,7 @@ notificationsRouter.post('/notify-nearest', authMiddleware, requireRole('admin',
     const { data: workers, error: wErr } = await q;
     if (wErr) return res.status(500).json({ error: wErr.message });
     if (!workers || workers.length === 0) {
-      return res.status(404).json({ error: 'No active workers with workplace location found' });
+      return res.status(400).json({ error: 'No active workers with workplace location found. Please ensure workers have their workplace coordinates set on the map in the Admin panel.' });
     }
 
     // Find nearest
