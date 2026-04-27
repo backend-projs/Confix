@@ -1,9 +1,23 @@
 {
+  "app\\admin\\workers\\page.tsx -> @/components/LocationPicker": {
+    "id": "app\\admin\\workers\\page.tsx -> @/components/LocationPicker",
+    "files": [
+      "static/css/_app-pages-browser_src_components_LocationPicker_tsx.css",
+      "static/chunks/_app-pages-browser_src_components_LocationPicker_tsx.js"
+    ]
+  },
   "app\\analyze-image\\page.tsx -> @/components/LocationPicker": {
     "id": "app\\analyze-image\\page.tsx -> @/components/LocationPicker",
     "files": [
       "static/css/_app-pages-browser_src_components_LocationPicker_tsx.css",
       "static/chunks/_app-pages-browser_src_components_LocationPicker_tsx.js"
+    ]
+  },
+  "app\\map\\page.tsx -> @/components/MapView": {
+    "id": "app\\map\\page.tsx -> @/components/MapView",
+    "files": [
+      "static/css/_app-pages-browser_src_components_MapView_tsx.css",
+      "static/chunks/_app-pages-browser_src_components_MapView_tsx.js"
     ]
   },
   "app\\report\\page.tsx -> @/components/LocationPicker": {

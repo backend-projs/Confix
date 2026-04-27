@@ -85,6 +85,31 @@ export async function updateWorker(token: string, id: string, payload: any) {
   return res.json();
 }
 
+export async function deleteWorker(token: string, id: string) {
+  const res = await fetch(`${API}/users/workers/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed' }));
+    throw new Error(err.error || 'Failed to delete worker');
+  }
+  return res.json();
+}
+
+export async function resetWorkerPassword(token: string, id: string, password: string) {
+  const res = await fetch(`${API}/users/workers/${id}/password`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed' }));
+    throw new Error(err.error || 'Failed to reset password');
+  }
+  return res.json();
+}
+
 // Superadmin APIs
 export async function fetchAdmins(token: string) {
   const res = await fetch(`${API}/users/admins`, {
@@ -103,6 +128,122 @@ export async function createAdmin(token: string, payload: any) {
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: 'Failed' }));
     throw new Error(err.error || 'Failed to create admin');
+  }
+  return res.json();
+}
+
+export async function deleteAdmin(token: string, id: string) {
+  const res = await fetch(`${API}/users/admins/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed' }));
+    throw new Error(err.error || 'Failed to delete admin');
+  }
+  return res.json();
+}
+
+export async function resetAdminPassword(token: string, id: string, password: string) {
+  const res = await fetch(`${API}/users/admins/${id}/password`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed' }));
+    throw new Error(err.error || 'Failed to reset password');
+  }
+  return res.json();
+}
+
+// Threads APIs (Discord-style chat threads on reports)
+export async function fetchThreads(token: string) {
+  const res = await fetch(`${API}/threads`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Failed to fetch threads');
+  return res.json();
+}
+
+export async function fetchThreadMessages(token: string, reportId: string) {
+  const res = await fetch(`${API}/threads/${reportId}/messages`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Failed to fetch messages');
+  return res.json();
+}
+
+export async function postThreadMessage(token: string, reportId: string, body: string, attachment_url?: string) {
+  const res = await fetch(`${API}/threads/${reportId}/messages`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ body, attachment_url }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed' }));
+    throw new Error(err.error || 'Failed to send message');
+  }
+  return res.json();
+}
+
+export async function resolveThread(token: string, reportId: string, resolution_notes?: string) {
+  const res = await fetch(`${API}/threads/${reportId}/resolve`, {
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ resolution_notes }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed' }));
+    throw new Error(err.error || 'Failed to resolve');
+  }
+  return res.json();
+}
+
+export async function reopenThread(token: string, reportId: string) {
+  const res = await fetch(`${API}/threads/${reportId}/reopen`, {
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Failed to reopen');
+  return res.json();
+}
+
+export async function fetchThreadAiSuggestion(token: string, reportId: string) {
+  const res = await fetch(`${API}/threads/${reportId}/ai-suggestion`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Failed to fetch AI suggestion');
+  return res.json();
+}
+
+// Notifications APIs
+export async function fetchMyNotifications(token: string) {
+  const res = await fetch(`${API}/notifications/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Failed to fetch notifications');
+  return res.json();
+}
+
+export async function markNotificationRead(token: string, id: string) {
+  const res = await fetch(`${API}/notifications/${id}/read`, {
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Failed to mark notification read');
+  return res.json();
+}
+
+export async function notifyNearestWorker(token: string, reportId: string, message?: string) {
+  const res = await fetch(`${API}/notifications/notify-nearest`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ report_id: reportId, message }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed' }));
+    throw new Error(err.error || 'Failed to notify nearest worker');
   }
   return res.json();
 }

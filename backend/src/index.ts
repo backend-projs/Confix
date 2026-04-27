@@ -9,6 +9,8 @@ import { analyzeImageRouter } from './routes/analyzeImage';
 import { authRouter } from './routes/auth';
 import { usersRouter } from './routes/users';
 import { companiesRouter } from './routes/companies';
+import { notificationsRouter } from './routes/notifications';
+import { threadsRouter } from './routes/threads';
 
 dotenv.config();
 
@@ -56,6 +58,8 @@ app.use('/api/analyze-image', analyzeImageRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/companies', companiesRouter);
+app.use('/api/notifications', notificationsRouter);
+app.use('/api/threads', threadsRouter);
 
 // Global error handling middleware
 app.use((err: any, _req: any, res: any, _next: any) => {

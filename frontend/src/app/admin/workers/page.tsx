@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
-import { fetchWorkers, createWorker, updateWorker, fetchCompanyAssets } from '@/lib/auth-api';
-import { Users, Plus, Loader2, X, Pencil, CheckCircle, AlertTriangle } from 'lucide-react';
+import { fetchWorkers, createWorker, updateWorker, deleteWorker, resetWorkerPassword, fetchCompanyAssets } from '@/lib/auth-api';
+import { Users, Plus, Loader2, X, Pencil, CheckCircle, AlertTriangle, Trash2, Key, MapPin, ClipboardList, HardHat } from 'lucide-react';
+import dynamic from 'next/dynamic';
+const LocationPicker = dynamic(() => import('@/components/LocationPicker'), { ssr: false });
 
 export default function AdminWorkersPage() {
   const router = useRouter();
@@ -24,6 +26,10 @@ export default function AdminWorkersPage() {
     phone: '',
     email: '',
     assigned_asset_id: '',
+    workplace_latitude: null as number | null,
+    workplace_longitude: null as number | null,
+    workplace_address: '',
+    worker_type: 'field' as 'field' | 'audit',
   };
   const [form, setForm] = useState(emptyForm);
   const [editForm, setEditForm] = useState<any>({});
@@ -63,6 +69,10 @@ export default function AdminWorkersPage() {
       await createWorker(token!, {
         ...form,
         assigned_asset_id: form.assigned_asset_id || undefined,
+        workplace_latitude: form.workplace_latitude ?? undefined,
+        workplace_longitude: form.workplace_longitude ?? undefined,
+        workplace_address: form.workplace_address || undefined,
+        worker_type: form.worker_type,
       });
       setForm(emptyForm);
       setShowCreate(false);
@@ -84,6 +94,30 @@ export default function AdminWorkersPage() {
       setError(err.message);
     }
     setSaving(false);
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Delete worker "${name}"? This cannot be undone.`)) return;
+    try {
+      await deleteWorker(token!, id);
+      loadData();
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const handleResetPassword = async (id: string, name: string) => {
+    const password = prompt(`Set new password for "${name}" (min 6 chars):`);
+    if (!password || password.length < 6) {
+      if (password !== null) alert('Password must be at least 6 characters');
+      return;
+    }
+    try {
+      await resetWorkerPassword(token!, id, password);
+      alert('Password updated');
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
   if (!user || user.role !== 'admin') {
@@ -134,6 +168,29 @@ export default function AdminWorkersPage() {
             <button onClick={() => setShowCreate(false)} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500"><X size={14} /></button>
           </div>
           <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="md:col-span-2">
+              <label className="block text-xs font-medium text-gray-500 dark:text-slate-400 mb-1">Worker Type *</label>
+              <div className="grid grid-cols-2 gap-2">
+                {(['field', 'audit'] as const).map(t => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setForm(f => ({ ...f, worker_type: t }))}
+                    className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
+                      form.worker_type === t
+                        ? 'bg-purple-50 dark:bg-purple-500/10 border-purple-300 dark:border-purple-500/40 text-purple-700 dark:text-purple-300'
+                        : 'bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-white/10'
+                    }`}
+                  >
+                    {t === 'field' ? <HardHat size={14} /> : <ClipboardList size={14} />}
+                    {t === 'field' ? 'Field Worker' : 'Audit Worker'}
+                    <span className="text-[10px] text-gray-500 dark:text-slate-500 ml-auto">
+                      {t === 'field' ? 'Resolves incidents' : 'Surveys & captures'}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 dark:text-slate-400 mb-1">Full Name *</label>
               <input required value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500" />
@@ -171,6 +228,28 @@ export default function AdminWorkersPage() {
               <label className="block text-xs font-medium text-gray-500 dark:text-slate-400 mb-1">Email</label>
               <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500" />
             </div>
+            <div className="md:col-span-2">
+              <label className="block text-xs font-medium text-gray-500 dark:text-slate-400 mb-1 flex items-center gap-1.5"><MapPin size={12} className="text-purple-600" /> Workplace Location</label>
+              <p className="text-[11px] text-gray-400 dark:text-slate-500 mb-2">Used to assign incidents to nearest worker. Click on the map to set the worker's home base.</p>
+              <input
+                value={form.workplace_address}
+                onChange={e => setForm(f => ({ ...f, workplace_address: e.target.value }))}
+                placeholder="Address (optional)"
+                className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 mb-2"
+              />
+              <div className="h-56 rounded-lg overflow-hidden border border-gray-200 dark:border-white/10">
+                <LocationPicker
+                  lat={form.workplace_latitude ?? undefined}
+                  lng={form.workplace_longitude ?? undefined}
+                  onSelect={(lat, lng) => setForm(f => ({ ...f, workplace_latitude: lat, workplace_longitude: lng }))}
+                />
+              </div>
+              {form.workplace_latitude && form.workplace_longitude && (
+                <p className="text-[11px] text-gray-500 dark:text-slate-400 mt-1">
+                  Selected: {form.workplace_latitude.toFixed(5)}, {form.workplace_longitude.toFixed(5)}
+                </p>
+              )}
+            </div>
             <div className="md:col-span-2 flex justify-end">
               <button type="submit" disabled={saving} className="bg-blue-600 text-white px-5 py-2 rounded-xl text-xs font-semibold hover:bg-blue-500 disabled:opacity-50 flex items-center gap-2 transition-colors">
                 {saving ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
@@ -184,11 +263,28 @@ export default function AdminWorkersPage() {
       {loading ? (
         <div className="flex items-center justify-center h-32"><Loader2 size={20} className="animate-spin text-purple-600" /></div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-6">
           {workers.length === 0 && (
             <div className="text-center py-12 text-sm text-gray-500 dark:text-slate-500">No workers found. Create your first worker above.</div>
           )}
-          {workers.map((w: any) => (
+          {(['field', 'audit'] as const).map(group => {
+            const groupWorkers = workers.filter((w: any) => (w.worker_type || 'field') === group);
+            if (groupWorkers.length === 0 && workers.length > 0) return null;
+            const isField = group === 'field';
+            return (
+              <div key={group} className="space-y-2">
+                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${isField ? 'bg-purple-50 dark:bg-purple-500/10' : 'bg-amber-50 dark:bg-amber-500/10'}`}>
+                  {isField ? <HardHat size={14} className="text-purple-600 dark:text-purple-400" /> : <ClipboardList size={14} className="text-amber-600 dark:text-amber-400" />}
+                  <h3 className={`text-xs font-semibold uppercase tracking-wider ${isField ? 'text-purple-700 dark:text-purple-300' : 'text-amber-700 dark:text-amber-300'}`}>
+                    {isField ? 'Field Workers' : 'Audit Workers'}
+                  </h3>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/60 dark:bg-white/10 text-gray-600 dark:text-slate-400 font-medium">{groupWorkers.length}</span>
+                  <span className="text-[10px] text-gray-500 dark:text-slate-500 ml-auto">
+                    {isField ? 'Resolves dispatched incidents' : 'Surveys and captures incidents'}
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {groupWorkers.map((w: any) => (
             <div key={w.id} className="bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/5 p-4 shadow-sm">
               {editingId === w.id ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -227,26 +323,49 @@ export default function AdminWorkersPage() {
               ) : (
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-semibold text-sm text-gray-900 dark:text-white">{w.full_name}</span>
                       <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200 font-medium">{w.worker_id}</span>
                       <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border ${w.status === 'active' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-gray-100 text-gray-800 border-gray-200'}`}>{w.status}</span>
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-slate-400">{w.position}{w.team ? ` · ${w.team}` : ''}</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-slate-200">{w.position}</p>
+                    {w.team && <p className="text-[11px] text-gray-500 dark:text-slate-400">Team: {w.team}</p>}
+                    {w.workplace_address && <p className="text-[11px] text-gray-400 dark:text-slate-600 flex items-center gap-1"><MapPin size={10} /> {w.workplace_address}</p>}
                     {w.assigned_asset && (
                       <p className="text-[11px] text-gray-400 dark:text-slate-600">Asset: {w.assigned_asset.name} ({w.assigned_asset.type})</p>
                     )}
                   </div>
-                  <button
-                    onClick={() => { setEditingId(w.id); setEditForm({}); }}
-                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500 transition-colors"
-                  >
-                    <Pencil size={14} />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => { setEditingId(w.id); setEditForm({}); }}
+                      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500 transition-colors"
+                      title="Edit"
+                    >
+                      <Pencil size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleResetPassword(w.id, w.full_name)}
+                      className="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-500/10 text-gray-500 hover:text-blue-600 transition-colors"
+                      title="Change Password"
+                    >
+                      <Key size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(w.id, w.full_name)}
+                      className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-500 hover:text-red-600 transition-colors"
+                      title="Delete"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
-          ))}
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

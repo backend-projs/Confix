@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
-import { fetchRegistrations, approveRegistration, rejectRegistration, fetchAdmins, createAdmin, fetchCompanies } from '@/lib/auth-api';
-import { Shield, CheckCircle, XCircle, Loader2, UserPlus, Building2, AlertTriangle } from 'lucide-react';
+import { fetchRegistrations, approveRegistration, rejectRegistration, fetchAdmins, createAdmin, fetchCompanies, deleteAdmin, resetAdminPassword } from '@/lib/auth-api';
+import { Shield, CheckCircle, XCircle, Loader2, UserPlus, Building2, AlertTriangle, Trash2, Key } from 'lucide-react';
 
 export default function SuperadminPage() {
   const router = useRouter();
@@ -57,6 +57,30 @@ export default function SuperadminPage() {
       alert(err.message);
     }
     setProcessingId(null);
+  };
+
+  const handleDeleteAdmin = async (id: string, name: string) => {
+    if (!confirm(`Delete admin "${name}"? This cannot be undone.`)) return;
+    try {
+      await deleteAdmin(token!, id);
+      loadData();
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  const handleResetAdminPassword = async (id: string, name: string) => {
+    const password = prompt(`Set new password for "${name}" (min 6 chars):`);
+    if (!password || password.length < 6) {
+      if (password !== null) alert('Password must be at least 6 characters');
+      return;
+    }
+    try {
+      await resetAdminPassword(token!, id, password);
+      alert('Password updated');
+    } catch (err: any) {
+      alert(err.message);
+    }
   };
 
   const handleReject = async (id: string) => {
@@ -185,7 +209,23 @@ export default function SuperadminPage() {
                     <p className="font-semibold text-sm text-gray-900 dark:text-white">{admin.full_name}</p>
                     <p className="text-xs text-gray-500 dark:text-slate-400">{admin.email} · {admin.companies?.name || 'No company'}</p>
                   </div>
-                  <span className="text-[10px] px-2 py-1 rounded-full bg-purple-100 text-purple-800 border border-purple-200 font-medium">Admin</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] px-2 py-1 rounded-full bg-purple-100 text-purple-800 border border-purple-200 font-medium">Admin</span>
+                    <button
+                      onClick={() => handleResetAdminPassword(admin.id, admin.full_name)}
+                      className="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-500/10 text-gray-500 hover:text-blue-600 transition-colors"
+                      title="Change Password"
+                    >
+                      <Key size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteAdmin(admin.id, admin.full_name)}
+                      className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-500 hover:text-red-600 transition-colors"
+                      title="Delete"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

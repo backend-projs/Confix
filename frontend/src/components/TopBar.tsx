@@ -9,8 +9,9 @@ import { t, LANG_OPTIONS } from '@/lib/i18n';
 import {
   Gauge, PenLine, ClipboardList, HardHat, Globe2, BookLock,
   Building, UserCog, Menu, X, Sun, Moon, ChevronDown, Mic, ScanEye,
-  LogIn, LogOut, Shield, Users, HardHat as WorkerIcon,
+  LogIn, LogOut, Shield, Users,
 } from 'lucide-react';
+import NotificationsBell from './NotificationsBell';
 
 const baseNavItems = [
   { href: '/dashboard', tKey: 'nav.dashboard', icon: Gauge },
@@ -51,9 +52,6 @@ export default function TopBar() {
   // Build nav items based on role
   const navItems = [...baseNavItems];
   // New Report dropdown is handled separately, not in navItems array
-  if (user?.role === 'superadmin') {
-    navItems.push({ href: '/superadmin', tKey: 'nav.superadmin', icon: Shield });
-  }
   if (user?.role === 'admin') {
     navItems.push({ href: '/admin/workers', tKey: 'nav.workers', icon: Users });
   }
@@ -196,24 +194,20 @@ export default function TopBar() {
               </>
             )}
 
-            {user && (
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 bg-gray-100 dark:bg-white/[0.06] rounded-lg px-2.5 py-1.5 border border-gray-200 dark:border-white/10">
-                  <WorkerIcon size={14} className="text-purple-600 dark:text-purple-400" />
-                  <span className="text-xs font-medium text-gray-700 dark:text-slate-300">{user.full_name}</span>
-                  <span className="text-[10px] px-1 py-0.5 rounded bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 font-medium capitalize">
-                    {user.role}
-                  </span>
-                </div>
-                <button
-                  onClick={() => { logout(); router.push('/login'); }}
-                  className="p-2 rounded-lg bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-600 dark:bg-white/[0.06] dark:hover:bg-red-500/20 dark:text-slate-300 dark:hover:text-red-400 transition-colors"
-                  aria-label="Logout"
-                  title="Logout"
-                >
-                  <LogOut size={16} />
-                </button>
-              </div>
+            {/* Superadmin Link - Right Side */}
+            {user?.role === 'superadmin' && (
+              <Link
+                href="/superadmin"
+                className={cn(
+                  'flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap',
+                  pathname === '/superadmin'
+                    ? 'bg-purple-50 text-purple-700 dark:bg-white/15 dark:text-white shadow-inner shadow-purple-500/10'
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
+                )}
+              >
+                <Shield size={16} />
+                <span className="hidden xl:inline">{t('nav.superadmin', lang)}</span>
+              </Link>
             )}
 
             {!user && (
@@ -226,6 +220,9 @@ export default function TopBar() {
               </Link>
             )}
 
+            {/* Notifications Bell */}
+            {user && <NotificationsBell />}
+
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -234,6 +231,18 @@ export default function TopBar() {
             >
               {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </button>
+
+            {/* Sign Out Button - rightmost */}
+            {user && (
+              <button
+                onClick={() => { logout(); router.push('/login'); }}
+                className="p-2 rounded-lg bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-600 dark:bg-white/[0.06] dark:hover:bg-red-500/20 dark:text-slate-300 dark:hover:text-red-400 transition-colors"
+                aria-label="Logout"
+                title="Logout"
+              >
+                <LogOut size={16} />
+              </button>
+            )}
           </div>
 
           {/* Mobile: language flags + hamburger */}
@@ -364,24 +373,16 @@ export default function TopBar() {
               )}
             </nav>
 
-            {/* Mobile selectors / user info */}
+            {/* Mobile selectors / signout */}
             <div className="px-4 py-4 mt-2 border-t border-gray-200 dark:border-white/5 space-y-4">
               {user && (
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center">
-                    <WorkerIcon size={14} className="text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{user.full_name}</p>
-                    <p className="text-xs text-gray-500 dark:text-slate-500 capitalize">{user.role}</p>
-                  </div>
-                  <button
-                    onClick={() => { logout(); router.push('/login'); setMobileOpen(false); }}
-                    className="p-2 rounded-lg hover:bg-red-50 text-gray-500 hover:text-red-600 dark:hover:bg-red-500/10 dark:text-slate-400 dark:hover:text-red-400 transition-colors"
-                  >
-                    <LogOut size={16} />
-                  </button>
-                </div>
+                <button
+                  onClick={() => { logout(); router.push('/login'); setMobileOpen(false); }}
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-purple-50 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300"
+                >
+                  <LogOut size={16} />
+                  <span>Sign Out</span>
+                </button>
               )}
               {!user && (
                 <>

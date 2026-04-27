@@ -11,8 +11,9 @@ import {
 } from 'recharts';
 import {
   AlertTriangle, FileText, ShieldAlert, HardHat, Radiation, ClipboardCheck, UserCheck, Activity,
-  LayoutGrid, ArrowUpRight,
+  LayoutGrid, ArrowUpRight, Map as MapIcon,
 } from 'lucide-react';
+import MapView from '@/components/MapView';
 
 const RISK_SHADES = ['#c4b5fd', '#a78bfa', '#8b5cf6', '#7c3aed'];
 const TOOLTIP_STYLE_DARK = { background: '#1a1a2e', border: 'none', borderRadius: 10, color: '#c4b5fd', fontSize: 12, boxShadow: '0 8px 32px rgba(0,0,0,.4)' };
@@ -222,6 +223,14 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Row 3: Infrastructure Map */}
+      <div className="bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 shadow-sm dark:shadow-none">
+        <h3 className="text-xs font-medium text-gray-500 dark:text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5"><MapIcon size={12} /> {t('dashboard.infrastructureMap', lang) || 'Infrastructure Map'}</h3>
+        <div className="h-[320px] rounded-lg overflow-hidden border border-gray-200 dark:border-white/[0.04]">
+          <MapView reports={filtered} onSelect={() => {}} />
         </div>
       </div>
     </div>

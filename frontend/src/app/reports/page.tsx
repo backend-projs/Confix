@@ -7,16 +7,33 @@ import {
   getRiskColor, getStatusColor, getVisibilityColor, formatDate,
   ASSET_TYPES, ISSUE_TYPES, STATUSES,
 } from '@/lib/utils';
-import { Search, X, Eye, ShieldBan } from 'lucide-react';
+import { Search, X, Eye, ShieldBan, BellPlus, Loader2 } from 'lucide-react';
 import { t } from '@/lib/i18n';
+import { notifyNearestWorker } from '@/lib/auth-api';
 
 export default function ReportsPage() {
-  const { selectedCompany, selectedRole, lang } = useAppContext();
+  const { selectedCompany, selectedRole, lang, user, token } = useAppContext();
   const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState({ assetType: '', issueType: '', status: '', riskLevel: '', visibilityLevel: '' });
   const [selectedReport, setSelectedReport] = useState<any>(null);
+  const [notifying, setNotifying] = useState(false);
+  const [notifyResult, setNotifyResult] = useState<string | null>(null);
+
+  const handleNotifyNearest = async () => {
+    if (!selectedReport || !token) return;
+    setNotifying(true);
+    setNotifyResult(null);
+    try {
+      const result = await notifyNearestWorker(token, selectedReport.id);
+      const km = (result.worker.distance_meters / 1000).toFixed(2);
+      setNotifyResult(`Notification sent to ${result.worker.full_name} (${km} km away)`);
+    } catch (err: any) {
+      setNotifyResult(`Error: ${err.message}`);
+    }
+    setNotifying(false);
+  };
 
   useEffect(() => {
     if (selectedRole === 'Field Engineer') return;
@@ -122,8 +139,8 @@ export default function ReportsPage() {
 
       {/* Detail Modal */}
       {selectedReport && (
-        <div className="fixed inset-0 bg-black/30 dark:bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => setSelectedReport(null)}>
-          <div className="bg-white dark:bg-[#1a1a2e] rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-4 sm:p-6 space-y-4 border border-gray-200 dark:border-white/10 mx-2 sm:mx-0 shadow-xl" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/30 dark:bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => { setSelectedReport(null); setNotifyResult(null); }}>
+          <div className="bg-white dark:bg-[#1a1a2e] rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-4 sm:p-6 space-y-4 border border-gray-200 dark:border-white/10 mx-2 sm:mx-0 shadow-xl" onClick={e => { e.stopPropagation(); }}>
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="text-lg font-bold text-gray-900 dark:text-white">{selectedReport.asset_name}</h2>
@@ -141,13 +158,30 @@ export default function ReportsPage() {
 
             <div className="text-sm"><span className="font-semibold text-gray-500 dark:text-slate-400">{t('reports.descLabel', lang)}:</span><p className="mt-1 text-gray-700 dark:text-slate-300">{selectedReport.description}</p></div>
 
-            {/* Risk Matrix */}
-            <div className="bg-purple-50 dark:bg-purple-950/30 rounded-lg p-4 border border-purple-200 dark:border-purple-500/10">
-              <h3 className="text-sm font-semibold mb-2 text-purple-700 dark:text-purple-300">{t('reports.riskMatrix', lang)}</h3>
-              <p className="text-sm text-gray-700 dark:text-slate-300">Impact {selectedReport.impact} × Likelihood {selectedReport.likelihood} = <span className="font-bold text-gray-900 dark:text-white">{selectedReport.risk_matrix_score}</span></p>
-              <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full font-medium border ${getRiskColor(selectedReport.risk_level)}`}>{selectedReport.risk_level}</span>
-              <p className="text-xs text-gray-500 dark:text-slate-500 italic mt-2">{t('reports.riskDisclaimer', lang)}</p>
-            </div>
+            {/* Notify Nearest Worker (admin/superadmin) */}
+            {user && (user.role === 'admin' || user.role === 'superadmin') && (
+              <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-4 border border-blue-200 dark:border-blue-500/10 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-sm font-semibold text-blue-700 dark:text-blue-300">Dispatch Worker</h3>
+                    <p className="text-[11px] text-gray-500 dark:text-slate-400">Send notification to the nearest worker by workplace location</p>
+                  </div>
+                  <button
+                    onClick={handleNotifyNearest}
+                    disabled={notifying}
+                    className="flex items-center gap-1.5 bg-blue-600 text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-blue-500 disabled:opacity-50 transition-colors"
+                  >
+                    {notifying ? <Loader2 size={14} className="animate-spin" /> : <BellPlus size={14} />}
+                    Notify Nearest
+                  </button>
+                </div>
+                {notifyResult && (
+                  <p className={`text-xs ${notifyResult.startsWith('Error') ? 'text-red-600 dark:text-red-400' : 'text-green-700 dark:text-green-400'}`}>
+                    {notifyResult}
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Safety */}
             <div className="bg-amber-50 dark:bg-amber-950/20 rounded-lg p-4 space-y-2 border border-amber-200 dark:border-amber-500/10">
