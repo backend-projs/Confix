@@ -11,7 +11,7 @@ import {
 } from 'recharts';
 import {
   AlertTriangle, FileText, ShieldAlert, HardHat, Radiation, ClipboardCheck, UserCheck, Activity,
-  LayoutGrid, ArrowUpRight, Map as MapIcon,
+  LayoutGrid, ArrowUpRight, Map as MapIcon, Camera,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
