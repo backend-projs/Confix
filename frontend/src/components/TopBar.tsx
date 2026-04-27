@@ -61,7 +61,7 @@ export default function TopBar() {
   return (
     <>
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 dark:border-transparent dark:bg-gradient-to-r dark:from-[#0f0c29] dark:via-[#302b63] dark:to-[#24243e] shadow-sm dark:shadow-lg dark:shadow-purple-950/20 transition-colors">
-        <div className="flex items-center justify-between px-3 sm:px-6 h-14 sm:h-16">
+        <div className="flex items-center justify-between px-3 sm:px-6 h-14 sm:h-16 max-w-[1440px] mx-auto w-full">
           {/* Logo */}
           <Link href={user ? '/dashboard' : '/login'} className="flex items-center gap-2 mr-4 lg:mr-8 shrink-0">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
@@ -194,39 +194,6 @@ export default function TopBar() {
               </>
             )}
 
-            {/* Role-specific Links - Right Side */}
-            {user?.role === 'superadmin' && (
-              <Link
-                href="/superadmin"
-                className={cn(
-                  'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 whitespace-nowrap border',
-                  pathname === '/superadmin'
-                    ? 'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-500/20 dark:text-purple-300 dark:border-purple-500/30'
-                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:text-gray-900 dark:bg-white/5 dark:text-slate-300 dark:border-white/10 dark:hover:bg-white/10 dark:hover:text-white'
-                )}
-              >
-                Superadmin
-              </Link>
-            )}
-            {user?.role === 'admin' && (
-              <Link
-                href="/admin/workers"
-                className={cn(
-                  'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 whitespace-nowrap border',
-                  pathname === '/admin/workers'
-                    ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500/30'
-                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:text-gray-900 dark:bg-white/5 dark:text-slate-300 dark:border-white/10 dark:hover:bg-white/10 dark:hover:text-white'
-                )}
-              >
-                Admin
-              </Link>
-            )}
-            {user?.role === 'worker' && (
-              <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap border bg-green-50 text-green-700 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20">
-                Worker
-              </span>
-            )}
-
             {!user && (
               <Link
                 href="/login"
@@ -260,6 +227,35 @@ export default function TopBar() {
             >
               {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </button>
+
+            {/* Superadmin / Admin links - far right before logout */}
+            {user?.role === 'superadmin' && (
+              <Link
+                href="/superadmin"
+                className={cn(
+                  'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 whitespace-nowrap border',
+                  pathname === '/superadmin'
+                    ? 'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-500/20 dark:text-purple-300 dark:border-purple-500/30'
+                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:text-gray-900 dark:bg-white/5 dark:text-slate-300 dark:border-white/10 dark:hover:bg-white/10 dark:hover:text-white'
+                )}
+              >
+                <Shield size={14} />
+                Superadmin
+              </Link>
+            )}
+            {user?.role === 'admin' && (
+              <Link
+                href="/admin/workers"
+                className={cn(
+                  'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 whitespace-nowrap border',
+                  pathname === '/admin/workers'
+                    ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500/30'
+                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:text-gray-900 dark:bg-white/5 dark:text-slate-300 dark:border-white/10 dark:hover:bg-white/10 dark:hover:text-white'
+                )}
+              >
+                Admin
+              </Link>
+            )}
 
             {/* Sign Out Button - rightmost */}
             {user && (
