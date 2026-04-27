@@ -605,6 +605,7 @@ export default function VoiceReportPage() {
                   </div>
                 )}
               </div>
+            </div>
 
             {/* Raw fallback display */}
             {rawFallback && (
