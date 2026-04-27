@@ -89,7 +89,7 @@ export default function TopBar() {
                       )}
                     >
                       <PenLine size={16} />
-                      <span className="hidden xl:inline">{t('nav.newReport', lang)}</span>
+                      <span className="hidden lg:inline">{t('nav.newReport', lang)}</span>
                       <ChevronDown size={14} className={cn('transition-transform', reportDropdownOpen && 'rotate-180')} />
                     </button>
                     {reportDropdownOpen && (
@@ -117,7 +117,7 @@ export default function TopBar() {
                     )}
                   >
                     <PenLine size={16} />
-                    <span className="hidden xl:inline">{t('nav.newReport', lang)}</span>
+                    <span className="hidden lg:inline">{t('nav.newReport', lang)}</span>
                   </Link>
                 )}
                 {/* Other nav items */}
@@ -135,7 +135,7 @@ export default function TopBar() {
                       )}
                     >
                       <item.icon size={16} />
-                      <span className="hidden xl:inline">{t(item.tKey, lang)}</span>
+                      <span className="hidden lg:inline">{t(item.tKey, lang)}</span>
                     </Link>
                   );
                 })}
