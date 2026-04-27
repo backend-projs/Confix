@@ -1,8 +1,8 @@
 'use client';
 
 import {
-  Shield, Lock, Users, Eye, ScrollText, Database, Globe, Server,
-  AlertTriangle, Fingerprint, KeyRound, FileCheck,
+  Shield, ShieldCheck, Lock, Users, Eye, ScrollText, Database, Globe, Server,
+  AlertTriangle, Fingerprint, KeyRound, FileCheck, FileText,
 } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { t } from '@/lib/i18n';
@@ -62,34 +62,32 @@ export default function GovernancePage() {
 
   return (
     <div className="space-y-6">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#302b63] to-[#0f172a] p-4 sm:p-6">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-[#1a1145] dark:via-[#302b63] dark:to-[#0f172a] p-4 sm:p-6 border border-purple-100 dark:border-transparent">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="relative z-10">
-          <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2 text-white"><Shield size={22} /> {t('gov.title', lang)}</h1>
-          <p className="text-purple-300/70 text-xs sm:text-sm mt-1">
-            {t('gov.subtitle', lang)}
-          </p>
+          <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2 text-gray-900 dark:text-white"><ShieldCheck size={22} /> {t('gov.title', lang)}</h1>
+          <p className="text-purple-600/60 dark:text-purple-300/70 text-xs sm:text-sm mt-1">{t('gov.subtitle', lang)}</p>
         </div>
       </div>
 
       <div className="bg-indigo-950/30 border border-indigo-500/15 rounded-xl p-4 flex items-start gap-3">
         <Fingerprint size={20} className="text-indigo-400 mt-0.5" />
         <div>
-          <p className="text-sm font-semibold text-indigo-300">{t('gov.ethicalAI', lang)}</p>
-          <p className="text-sm text-slate-400">
-            {t('gov.ethicalAIDesc', lang)}
-          </p>
+          <div className="text-center py-12 text-purple-600 dark:text-purple-400 animate-pulse">{t('gov.loading', lang)}</div>
+          <p className="text-sm text-slate-400">{t('gov.ethicalAIDesc', lang)}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5">
         {sections.map((s) => (
-          <div key={s.title} className="bg-[#16162a] rounded-xl border border-white/5 p-4 sm:p-5 space-y-3 hover:border-purple-500/20 transition-colors">
-            <div className="flex items-center gap-2">
-              <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 p-2 rounded-lg"><s.icon size={18} className="text-purple-400" /></div>
-              <h3 className="font-semibold text-white">{s.title}</h3>
+          <div key={s.title} className="bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/5 p-4 sm:p-5 hover:border-indigo-300 dark:hover:border-indigo-500/20 transition-colors shadow-sm dark:shadow-none">
+            <div className="flex items-start gap-3 mb-3">
+              <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/30 flex items-center justify-center mt-0.5"><FileText size={16} className="text-indigo-600 dark:text-indigo-400" /></div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-gray-900 dark:text-white text-sm">{s.title}</h3>
+                <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">{s.desc}</p>
+              </div>
             </div>
-            <p className="text-sm text-slate-400">{s.desc}</p>
             <ul className="space-y-1">
               {s.items.map((item, i) => (
                 <li key={i} className="text-xs text-slate-500 flex items-center gap-2">

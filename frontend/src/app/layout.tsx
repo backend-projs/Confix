@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           crossOrigin=""
         />
       </head>
-      <body className="bg-[#0e0e1a] text-gray-100 min-h-screen">
+      <body className="min-h-screen bg-[var(--surface)] text-[var(--text-primary)] transition-colors duration-200">
         <AppProvider>
           <TopBar />
           <main className="px-3 py-4 sm:p-6 max-w-[1440px] mx-auto">{children}</main>

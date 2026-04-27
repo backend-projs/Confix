@@ -1,8 +1,6 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/map/page": "app/map/page.js",
-  "/governance/page": "app/governance/page.js",
-  "/analyze-image/page": "app/analyze-image/page.js",
-  "/reports/page": "app/reports/page.js",
-  "/voice-report/page": "app/voice-report/page.js"
+  "/dashboard/page": "app/dashboard/page.js",
+  "/register-company/page": "app/register-company/page.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js"
 }

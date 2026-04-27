@@ -2,8 +2,73 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Light theme (default) ── */
+:root {
+  --surface: #ffffff;
+  --surface-card: #ffffff;
+  --surface-hover: #f8fafc;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+  --border-color: #e5e7eb;
+  --accent: #6d28d9;
+  --accent-soft: #ede9fe;
+
+  /* Component tokens */
+  --header-bg: #ffffff;
+  --header-border: #e5e7eb;
+  --hero-from: #ede9fe;
+  --hero-via: #e0e7ff;
+  --hero-to: #f0fdf4;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --input-bg: #f9fafb;
+  --input-border: #d1d5db;
+  --input-text: #111827;
+  --badge-bg: #f3f4f6;
+  --tooltip-bg: #ffffff;
+  --tooltip-border: #e5e7eb;
+  --tooltip-text: #374151;
+  --modal-bg: #ffffff;
+  --modal-overlay: rgba(0,0,0,0.3);
+  --drawer-bg: #ffffff;
+}
+
+/* ── Dark theme ── */
+.dark {
+  --surface: #0e0e1a;
+  --surface-card: #16162a;
+  --surface-hover: #1e1e36;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border-color: rgba(255,255,255,0.06);
+  --accent: #a78bfa;
+  --accent-soft: rgba(139,92,246,0.12);
+
+  --header-bg: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+  --header-border: transparent;
+  --hero-from: #1a1145;
+  --hero-via: #2d1b69;
+  --hero-to: #0f172a;
+  --card-bg: #16162a;
+  --card-border: rgba(255,255,255,0.04);
+  --input-bg: rgba(255,255,255,0.05);
+  --input-border: rgba(255,255,255,0.1);
+  --input-text: #ffffff;
+  --badge-bg: rgba(255,255,255,0.06);
+  --tooltip-bg: #1a1a2e;
+  --tooltip-border: transparent;
+  --tooltip-text: #c4b5fd;
+  --modal-bg: #1a1a2e;
+  --modal-overlay: rgba(0,0,0,0.7);
+  --drawer-bg: linear-gradient(to bottom, #0f0c29, #1a1640, #0e0e1a);
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--surface);
+  color: var(--text-primary);
 }
 
 /* Voice Report — listening ring pulse */

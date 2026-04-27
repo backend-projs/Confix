@@ -11,7 +11,7 @@ import { analyzeImage, createReport } from '@/lib/api';
 
 const LocationPicker = dynamic(() => import('@/components/LocationPicker'), {
   ssr: false,
-  loading: () => <div className="h-full flex items-center justify-center text-slate-500 text-xs">Loading map...</div>,
+  loading: () => <div className="h-full flex items-center justify-center text-gray-500 dark:text-slate-500 text-xs">Loading map...</div>,
 });
 
 interface AnalysisResult {
@@ -45,10 +45,10 @@ interface AnalysisResult {
 type PageState = 'idle' | 'analyzing' | 'result' | 'error' | 'location' | 'form' | 'submitting' | 'submitted';
 
 const SEVERITY_COLORS: Record<string, string> = {
-  Critical: 'bg-red-500/20 text-red-300 border-red-500/30',
-  High: 'bg-orange-500/20 text-orange-300 border-orange-500/30',
-  Medium: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
-  Low: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+  Critical: 'bg-red-50 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-200 dark:border-red-500/30',
+  High: 'bg-orange-50 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-500/30',
+  Medium: 'bg-yellow-50 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-500/30',
+  Low: 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/30',
 };
 
 function severityToImpact(sev: string): number {
@@ -346,7 +346,7 @@ export default function AnalyzeImagePage() {
         <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 via-violet-400 to-blue-400 bg-clip-text text-transparent">
           {t('imgAI.title', lang)}
         </h1>
-        <p className="text-slate-500 text-sm mt-1">{t('imgAI.subtitle', lang)}</p>
+        <p className="text-gray-500 dark:text-slate-500 text-sm mt-1">{t('imgAI.subtitle', lang)}</p>
       </div>
 
       <canvas ref={canvasRef} className="hidden" />
@@ -386,8 +386,8 @@ export default function AnalyzeImagePage() {
               dragOver
                 ? 'border-purple-500 bg-purple-500/10'
                 : preview
-                  ? 'border-white/10 bg-[#16162a]'
-                  : 'border-white/10 bg-[#16162a] hover:border-purple-500/40 hover:bg-purple-500/5'
+                  ? 'border-gray-200 dark:border-white/10 bg-white dark:bg-[#16162a]'
+                  : 'border-gray-200 dark:border-white/10 bg-white dark:bg-[#16162a] hover:border-purple-500/40 hover:bg-purple-500/5'
             )}
           >
             <input
@@ -410,8 +410,8 @@ export default function AnalyzeImagePage() {
                 <div className="w-16 h-16 rounded-2xl bg-purple-500/10 flex items-center justify-center">
                   <Upload size={28} className="text-purple-400" />
                 </div>
-                <p className="text-slate-300 text-sm font-medium">{t('imgAI.dragDrop', lang)}</p>
-                <p className="text-slate-600 text-xs">{t('imgAI.maxSize', lang)}</p>
+                <p className="text-gray-700 dark:text-slate-300 text-sm font-medium">{t('imgAI.dragDrop', lang)}</p>
+                <p className="text-gray-400 dark:text-slate-600 text-xs">{t('imgAI.maxSize', lang)}</p>
               </>
             )}
           </div>
@@ -422,7 +422,7 @@ export default function AnalyzeImagePage() {
           <div className="flex justify-center">
             <button
               onClick={(e) => { e.stopPropagation(); openCamera(); }}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium text-slate-300 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-purple-500/30 transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-slate-300 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 hover:border-purple-500/30 transition-all"
             >
               <Camera size={18} className="text-purple-400" />
               {t('imgAI.camera', lang)}
@@ -453,7 +453,7 @@ export default function AnalyzeImagePage() {
             <button
               onClick={handleReset}
               disabled={state === 'analyzing'}
-              className="px-4 py-3 rounded-xl text-sm text-slate-500 hover:text-slate-300 bg-white/5 hover:bg-white/10 transition-all"
+              className="px-4 py-3 rounded-xl text-sm text-gray-500 dark:text-slate-500 hover:text-gray-700 dark:hover:text-slate-300 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-all"
             >
               <RefreshCw size={16} />
             </button>
@@ -462,9 +462,9 @@ export default function AnalyzeImagePage() {
 
         {/* Error */}
         {error && (
-          <div className="flex items-start gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20">
-            <AlertCircle size={18} className="text-red-400 mt-0.5 shrink-0" />
-            <p className="text-red-300/80 text-sm">{error}</p>
+          <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20">
+            <AlertCircle size={18} className="text-red-500 dark:text-red-400 mt-0.5 shrink-0" />
+            <p className="text-red-600 dark:text-red-300/80 text-sm">{error}</p>
           </div>
         )}
 
@@ -472,13 +472,13 @@ export default function AnalyzeImagePage() {
         {state === 'result' && result && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <ScanEye size={22} className="text-purple-400" />
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <ScanEye size={22} className="text-purple-600 dark:text-purple-400" />
                 {t('imgAI.result', lang)}
               </h2>
               <button
                 onClick={handleReset}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 transition-all"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-all"
               >
                 <RefreshCw size={14} /> {t('imgAI.reset', lang)}
               </button>
@@ -486,35 +486,35 @@ export default function AnalyzeImagePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               {/* Metadata card */}
-              <div className="bg-[#16162a] rounded-2xl border border-white/[0.04] p-4 sm:p-5 space-y-4">
-                <h3 className="text-sm font-semibold text-slate-300 flex items-center gap-2">
+              <div className="bg-white dark:bg-[#16162a] rounded-2xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 space-y-4">
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center gap-2">
                   <Eye size={16} className="text-purple-400" /> {t('imgAI.metadata', lang)}
                 </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-500">{t('imgAI.confidence', lang)}</span>
+                    <span className="text-xs text-gray-500 dark:text-slate-500">{t('imgAI.confidence', lang)}</span>
                     <div className="flex items-center gap-2">
-                      <div className="w-24 h-2 bg-white/5 rounded-full overflow-hidden">
+                      <div className="w-24 h-2 bg-gray-50 dark:bg-white/5 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-purple-500 to-violet-400 rounded-full"
                           style={{ width: `${(result.metadata.confidence_score * 100).toFixed(0)}%` }}
                         />
                       </div>
-                      <span className="text-sm font-mono text-purple-300">
+                      <span className="text-sm font-mono text-purple-600 dark:text-purple-300">
                         {(result.metadata.confidence_score * 100).toFixed(0)}%
                       </span>
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-500">{t('imgAI.environment', lang)}</span>
-                    <span className="text-sm text-slate-200 bg-white/5 px-3 py-1 rounded-lg">
+                    <span className="text-xs text-gray-500 dark:text-slate-500">{t('imgAI.environment', lang)}</span>
+                    <span className="text-sm text-gray-800 dark:text-slate-200 bg-gray-50 dark:bg-white/5 px-3 py-1 rounded-lg">
                       {result.metadata.environment}
                     </span>
                   </div>
                   {result._provider && (
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-slate-500">{t('imgAI.provider', lang)}</span>
-                      <span className="text-xs text-slate-400 bg-white/5 px-2 py-0.5 rounded">
+                      <span className="text-xs text-gray-500 dark:text-slate-500">{t('imgAI.provider', lang)}</span>
+                      <span className="text-xs text-gray-500 dark:text-slate-400 bg-gray-50 dark:bg-white/5 px-2 py-0.5 rounded">
                         {result._provider}
                       </span>
                     </div>
@@ -524,34 +524,34 @@ export default function AnalyzeImagePage() {
 
               {/* EXIF card */}
               {result.exif && (
-                <div className="bg-[#16162a] rounded-2xl border border-white/[0.04] p-4 sm:p-5 space-y-4">
-                  <h3 className="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                <div className="bg-white dark:bg-[#16162a] rounded-2xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 space-y-4">
+                  <h3 className="text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center gap-2">
                     <MapPin size={16} className="text-emerald-400" /> {t('imgAI.exifData', lang)}
                   </h3>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-slate-500">{t('imgAI.exifGPS', lang)}</span>
+                      <span className="text-xs text-gray-500 dark:text-slate-500">{t('imgAI.exifGPS', lang)}</span>
                       {result.exif.latitude != null && result.exif.longitude != null ? (
-                        <span className="text-sm font-mono text-emerald-300">
+                        <span className="text-sm font-mono text-emerald-600 dark:text-emerald-300">
                           {result.exif.latitude.toFixed(6)}, {result.exif.longitude.toFixed(6)}
                         </span>
                       ) : (
-                        <span className="text-xs text-slate-600">{t('imgAI.noExifGPS', lang)}</span>
+                        <span className="text-xs text-gray-400 dark:text-slate-600">{t('imgAI.noExifGPS', lang)}</span>
                       )}
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-slate-500">{t('imgAI.exifDate', lang)}</span>
+                      <span className="text-xs text-gray-500 dark:text-slate-500">{t('imgAI.exifDate', lang)}</span>
                       {result.exif.date_taken ? (
-                        <span className="text-sm text-slate-200 bg-white/5 px-3 py-1 rounded-lg">
+                        <span className="text-sm text-gray-800 dark:text-slate-200 bg-gray-50 dark:bg-white/5 px-3 py-1 rounded-lg">
                           {new Date(result.exif.date_taken).toLocaleString()}
                         </span>
                       ) : (
-                        <span className="text-xs text-slate-600">—</span>
+                        <span className="text-xs text-gray-400 dark:text-slate-600">—</span>
                       )}
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-slate-500">{t('imgAI.exifSource', lang)}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded ${result.exif.location_source === 'exif' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/5 text-slate-500'}`}>
+                      <span className="text-xs text-gray-500 dark:text-slate-500">{t('imgAI.exifSource', lang)}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded ${result.exif.location_source === 'exif' ? 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-slate-500'}`}>
                         {result.exif.location_source === 'exif' ? 'EXIF GPS' : 'No GPS in image'}
                       </span>
                     </div>
@@ -560,18 +560,18 @@ export default function AnalyzeImagePage() {
               )}
 
               {/* Asset card */}
-              <div className="bg-[#16162a] rounded-2xl border border-white/[0.04] p-4 sm:p-5 space-y-4">
-                <h3 className="text-sm font-semibold text-slate-300 flex items-center gap-2">
+              <div className="bg-white dark:bg-[#16162a] rounded-2xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 space-y-4">
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center gap-2">
                   <Tag size={16} className="text-blue-400" /> {t('imgAI.asset', lang)}
                 </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-500">{t('imgAI.assetCategory', lang)}</span>
+                    <span className="text-xs text-gray-500 dark:text-slate-500">{t('imgAI.assetCategory', lang)}</span>
                     <span className="text-sm text-white font-medium">{result.asset.category}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-500">{t('imgAI.assetId', lang)}</span>
-                    <span className="text-sm text-slate-300">
+                    <span className="text-xs text-gray-500 dark:text-slate-500">{t('imgAI.assetId', lang)}</span>
+                    <span className="text-sm text-gray-700 dark:text-slate-300">
                       {result.asset.identified_id || '—'}
                     </span>
                   </div>
@@ -579,25 +579,25 @@ export default function AnalyzeImagePage() {
               </div>
 
               {/* Diagnostics card */}
-              <div className="bg-[#16162a] rounded-2xl border border-white/[0.04] p-4 sm:p-5 space-y-4 md:col-span-2">
-                <h3 className="text-sm font-semibold text-slate-300 flex items-center gap-2">
+              <div className="bg-white dark:bg-[#16162a] rounded-2xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 space-y-4 md:col-span-2">
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center gap-2">
                   <Activity size={16} className="text-orange-400" /> {t('imgAI.diagnostics', lang)}
                 </h3>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     {result.diagnostics.is_defective ? (
-                      <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/15 border border-red-500/20 text-red-300 text-sm font-medium">
+                      <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-500/15 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-300 text-sm font-medium">
                         <ShieldAlert size={16} /> {t('imgAI.defective', lang)}
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/20 text-emerald-300 text-sm font-medium">
+                      <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-sm font-medium">
                         <ShieldCheck size={16} /> {t('imgAI.notDefective', lang)}
                       </span>
                     )}
                     {result.diagnostics.severity && (
                       <span className={cn(
                         'px-3 py-1.5 rounded-lg text-sm font-medium border',
-                        SEVERITY_COLORS[result.diagnostics.severity] || 'bg-white/5 text-slate-300 border-white/10'
+                        SEVERITY_COLORS[result.diagnostics.severity] || 'bg-gray-50 dark:bg-white/5 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-white/10'
                       )}>
                         {result.diagnostics.severity}
                       </span>
@@ -605,13 +605,13 @@ export default function AnalyzeImagePage() {
                   </div>
                   {result.diagnostics.defect_type && (
                     <div>
-                      <span className="text-xs text-slate-500 block mb-1">{t('imgAI.defectType', lang)}</span>
-                      <span className="text-sm text-white">{result.diagnostics.defect_type}</span>
+                      <span className="text-xs text-gray-500 dark:text-slate-500 block mb-1">{t('imgAI.defectType', lang)}</span>
+                      <span className="text-sm text-gray-900 dark:text-white">{result.diagnostics.defect_type}</span>
                     </div>
                   )}
                   <div>
-                    <span className="text-xs text-slate-500 block mb-1">{t('imgAI.techDesc', lang)}</span>
-                    <p className="text-sm text-slate-300 leading-relaxed bg-white/[0.03] rounded-xl p-3 border border-white/[0.04]">
+                    <span className="text-xs text-gray-500 dark:text-slate-500 block mb-1">{t('imgAI.techDesc', lang)}</span>
+                    <p className="text-sm text-gray-700 dark:text-slate-300 leading-relaxed bg-gray-50 dark:bg-white/[0.03] rounded-xl p-3 border border-gray-200 dark:border-white/[0.04]">
                       {result.diagnostics.technical_description}
                     </p>
                   </div>
@@ -619,28 +619,28 @@ export default function AnalyzeImagePage() {
               </div>
 
               {/* Spatial Context card */}
-              <div className="bg-[#16162a] rounded-2xl border border-white/[0.04] p-4 sm:p-5 space-y-4 md:col-span-2">
-                <h3 className="text-sm font-semibold text-slate-300 flex items-center gap-2">
+              <div className="bg-white dark:bg-[#16162a] rounded-2xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 space-y-4 md:col-span-2">
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center gap-2">
                   <MapPin size={16} className="text-emerald-400" /> {t('imgAI.spatial', lang)}
                 </h3>
                 <div className="space-y-3">
                   <div>
-                    <span className="text-xs text-slate-500 block mb-1.5">{t('imgAI.extractedText', lang)}</span>
+                    <span className="text-xs text-gray-500 dark:text-slate-500 block mb-1.5">{t('imgAI.extractedText', lang)}</span>
                     {result.spatial_context.extracted_text && result.spatial_context.extracted_text.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
                         {result.spatial_context.extracted_text.map((txt, i) => (
-                          <span key={i} className="px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-mono">
+                          <span key={i} className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 text-indigo-700 dark:text-indigo-300 text-xs font-mono">
                             {txt}
                           </span>
                         ))}
                       </div>
                     ) : (
-                      <span className="text-xs text-slate-600">{t('imgAI.noText', lang)}</span>
+                      <span className="text-xs text-gray-400 dark:text-slate-600">{t('imgAI.noText', lang)}</span>
                     )}
                   </div>
                   <div>
-                    <span className="text-xs text-slate-500 block mb-1">{t('imgAI.locationMarkers', lang)}</span>
-                    <p className="text-sm text-slate-300 leading-relaxed bg-white/[0.03] rounded-xl p-3 border border-white/[0.04]">
+                    <span className="text-xs text-gray-500 dark:text-slate-500 block mb-1">{t('imgAI.locationMarkers', lang)}</span>
+                    <p className="text-sm text-gray-700 dark:text-slate-300 leading-relaxed bg-gray-50 dark:bg-white/[0.03] rounded-xl p-3 border border-gray-200 dark:border-white/[0.04]">
                       {result.spatial_context.visual_location_markers}
                     </p>
                   </div>
@@ -658,7 +658,7 @@ export default function AnalyzeImagePage() {
               </button>
               <button
                 onClick={handleReset}
-                className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm text-slate-500 hover:text-slate-300 bg-white/5 hover:bg-white/10 transition-all"
+                className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm text-gray-500 dark:text-slate-500 hover:text-gray-700 dark:text-slate-300 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:bg-white/10 transition-all"
               >
                 <RefreshCw size={14} /> {t('imgAI.reset', lang)}
               </button>
@@ -669,29 +669,29 @@ export default function AnalyzeImagePage() {
         {/* Location Step */}
         {state === 'location' && (
           <div className="space-y-5">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <MapPin size={20} className="text-emerald-400" /> {t('imgAI.locationStep', lang)}
             </h2>
-            <p className="text-sm text-slate-400">{t('imgAI.locationStepDesc', lang)}</p>
+            <p className="text-sm text-gray-500 dark:text-slate-400">{t('imgAI.locationStepDesc', lang)}</p>
 
             {/* EXIF GPS found */}
             {locationMethod === 'exif' && form.latitude && form.longitude && (
-              <div className="bg-[#16162a] rounded-2xl border border-purple-500/20 p-4 sm:p-5 space-y-3">
-                <div className="flex items-center gap-2 text-purple-400 text-sm font-medium">
+              <div className="bg-white dark:bg-[#16162a] rounded-2xl border border-purple-500/20 p-4 sm:p-5 space-y-3">
+                <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 text-sm font-medium">
                   <CheckCircle2 size={16} /> {t('imgAI.exifFound', lang)}
                 </div>
-                <div className="flex items-center gap-4 text-xs text-slate-400">
-                  <span>Lat: <span className="font-mono text-slate-200">{form.latitude}</span></span>
-                  <span>Lng: <span className="font-mono text-slate-200">{form.longitude}</span></span>
+                <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-slate-400">
+                  <span>Lat: <span className="font-mono text-gray-800 dark:text-slate-200">{form.latitude}</span></span>
+                  <span>Lng: <span className="font-mono text-gray-800 dark:text-slate-200">{form.longitude}</span></span>
                 </div>
-                <div className="h-48 rounded-lg overflow-hidden border border-white/10">
+                <div className="h-48 rounded-lg overflow-hidden border border-gray-200 dark:border-white/10">
                   <LocationPicker
                     onSelect={handleLocationSelect}
                     lat={parseFloat(form.latitude)}
                     lng={parseFloat(form.longitude)}
                   />
                 </div>
-                <p className="text-[11px] text-slate-500">{t('imgAI.adjustPin', lang)}</p>
+                <p className="text-[11px] text-gray-500 dark:text-slate-500">{t('imgAI.adjustPin', lang)}</p>
               </div>
             )}
 
@@ -701,34 +701,34 @@ export default function AnalyzeImagePage() {
                 <button
                   onClick={handleUseGPS}
                   disabled={gpsLoading}
-                  className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-white/10 bg-[#16162a] hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-all"
+                  className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#16162a] hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-all"
                 >
                   {gpsLoading ? (
                     <Loader2 size={32} className="text-emerald-400 animate-spin" />
                   ) : (
                     <Navigation size={32} className="text-emerald-400" />
                   )}
-                  <span className="text-sm font-medium text-slate-200">{t('imgAI.useGPS', lang)}</span>
-                  <span className="text-xs text-slate-500">{t('imgAI.useGPSDesc', lang)}</span>
+                  <span className="text-sm font-medium text-gray-800 dark:text-slate-200">{t('imgAI.useGPS', lang)}</span>
+                  <span className="text-xs text-gray-500 dark:text-slate-500">{t('imgAI.useGPSDesc', lang)}</span>
                 </button>
                 <button
                   onClick={handleSelectOnMap}
-                  className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-white/10 bg-[#16162a] hover:border-blue-500/30 hover:bg-blue-500/5 transition-all"
+                  className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#16162a] hover:border-blue-500/30 hover:bg-blue-500/5 transition-all"
                 >
                   <Map size={32} className="text-blue-400" />
-                  <span className="text-sm font-medium text-slate-200">{t('imgAI.selectMap', lang)}</span>
-                  <span className="text-xs text-slate-500">{t('imgAI.selectMapDesc', lang)}</span>
+                  <span className="text-sm font-medium text-gray-800 dark:text-slate-200">{t('imgAI.selectMap', lang)}</span>
+                  <span className="text-xs text-gray-500 dark:text-slate-500">{t('imgAI.selectMapDesc', lang)}</span>
                 </button>
               </div>
             )}
 
             {/* GPS Error */}
             {gpsError && (
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                <AlertCircle size={18} className="text-amber-400 mt-0.5 shrink-0" />
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
+                <AlertCircle size={18} className="text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
                 <div className="flex-1">
-                  <p className="text-amber-300/80 text-sm">{gpsError}</p>
-                  <button onClick={handleSelectOnMap} className="text-xs text-purple-400 hover:text-purple-300 underline underline-offset-2 mt-1">
+                  <p className="text-amber-700 dark:text-amber-300/80 text-sm">{gpsError}</p>
+                  <button onClick={handleSelectOnMap} className="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 underline underline-offset-2 mt-1">
                     {t('imgAI.selectMap', lang)}
                   </button>
                 </div>
@@ -737,30 +737,30 @@ export default function AnalyzeImagePage() {
 
             {/* GPS success */}
             {locationMethod === 'gps' && form.latitude && form.longitude && (
-              <div className="bg-[#16162a] rounded-2xl border border-emerald-500/20 p-4 sm:p-5 space-y-3">
-                <div className="flex items-center gap-2 text-emerald-400 text-sm font-medium">
+              <div className="bg-white dark:bg-[#16162a] rounded-2xl border border-emerald-500/20 p-4 sm:p-5 space-y-3">
+                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-sm font-medium">
                   <CheckCircle2 size={16} /> {t('imgAI.gpsAcquired', lang)}
                 </div>
-                <div className="flex items-center gap-4 text-xs text-slate-400">
-                  <span>Lat: <span className="font-mono text-slate-200">{form.latitude}</span></span>
-                  <span>Lng: <span className="font-mono text-slate-200">{form.longitude}</span></span>
+                <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-slate-400">
+                  <span>Lat: <span className="font-mono text-gray-800 dark:text-slate-200">{form.latitude}</span></span>
+                  <span>Lng: <span className="font-mono text-gray-800 dark:text-slate-200">{form.longitude}</span></span>
                 </div>
-                <div className="h-48 rounded-lg overflow-hidden border border-white/10">
+                <div className="h-48 rounded-lg overflow-hidden border border-gray-200 dark:border-white/10">
                   <LocationPicker
                     onSelect={handleLocationSelect}
                     lat={parseFloat(form.latitude)}
                     lng={parseFloat(form.longitude)}
                   />
                 </div>
-                <p className="text-[11px] text-slate-500">{t('imgAI.adjustPin', lang)}</p>
+                <p className="text-[11px] text-gray-500 dark:text-slate-500">{t('imgAI.adjustPin', lang)}</p>
               </div>
             )}
 
             {/* Map selection */}
             {locationMethod === 'map' && (
-              <div className="bg-[#16162a] rounded-2xl border border-blue-500/20 p-4 sm:p-5 space-y-3">
-                <p className="text-sm text-slate-300">{t('imgAI.tapMap', lang)}</p>
-                <div className="h-64 rounded-lg overflow-hidden border border-white/10">
+              <div className="bg-white dark:bg-[#16162a] rounded-2xl border border-blue-500/20 p-4 sm:p-5 space-y-3">
+                <p className="text-sm text-gray-700 dark:text-slate-300">{t('imgAI.tapMap', lang)}</p>
+                <div className="h-64 rounded-lg overflow-hidden border border-gray-200 dark:border-white/10">
                   <LocationPicker
                     onSelect={handleLocationSelect}
                     lat={form.latitude ? parseFloat(form.latitude) : undefined}
@@ -768,9 +768,9 @@ export default function AnalyzeImagePage() {
                   />
                 </div>
                 {form.latitude && form.longitude && (
-                  <div className="flex items-center gap-4 text-xs text-slate-400">
-                    <span>Lat: <span className="font-mono text-slate-200">{form.latitude}</span></span>
-                    <span>Lng: <span className="font-mono text-slate-200">{form.longitude}</span></span>
+                  <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-slate-400">
+                    <span>Lat: <span className="font-mono text-gray-800 dark:text-slate-200">{form.latitude}</span></span>
+                    <span>Lng: <span className="font-mono text-gray-800 dark:text-slate-200">{form.longitude}</span></span>
                   </div>
                 )}
               </div>
@@ -786,14 +786,14 @@ export default function AnalyzeImagePage() {
                     'flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all',
                     form.latitude && form.longitude
                       ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-900/30'
-                      : 'bg-white/5 text-slate-600 cursor-not-allowed'
+                      : 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-slate-600 cursor-not-allowed'
                   )}
                 >
                   <CheckCircle2 size={16} /> {t('imgAI.confirmLocation', lang)}
                 </button>
                 <button
                   onClick={() => { setLocationMethod('none'); setForm(f => ({ ...f, latitude: '', longitude: '' })); setGpsError(null); setExifGps(null); }}
-                  className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm text-slate-500 hover:text-slate-300 bg-white/5 hover:bg-white/10 transition-all"
+                  className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm text-gray-500 dark:text-slate-500 hover:text-gray-700 dark:hover:text-slate-300 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-all"
                 >
                   <RefreshCw size={14} /> {t('imgAI.changeMethod', lang)}
                 </button>
@@ -805,39 +805,39 @@ export default function AnalyzeImagePage() {
         {/* Report creation form */}
         {(state === 'form' || state === 'submitting') && (
           <div className="space-y-5">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <Send size={20} className="text-purple-400" /> {t('imgAI.fillReport', lang)}
             </h2>
 
-            <div className="bg-[#16162a] rounded-xl border border-white/5 p-3 sm:p-5 space-y-4">
-              <h3 className="font-semibold text-purple-300 border-b border-white/5 pb-2">{t('report.assetInfo', lang)}</h3>
+            <div className="bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/5 p-3 sm:p-5 space-y-4">
+              <h3 className="font-semibold text-purple-700 dark:text-purple-300 border-b border-gray-200 dark:border-white/5 pb-2">{t('report.assetInfo', lang)}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.company', lang)}</label>
-                  <select value={form.tenantId} onChange={e => handleCompany(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.company', lang)}</label>
+                  <select value={form.tenantId} onChange={e => handleCompany(e.target.value)} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
                     {COMPANIES.filter(c => c.id !== 'all').map(c => <option key={c.id} value={c.id} className="bg-slate-900">{c.name}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.assetName', lang)} *</label>
-                  <input value={form.assetName} onChange={e => setForm(f => ({ ...f, assetName: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Bridge A21" />
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.assetName', lang)} *</label>
+                  <input value={form.assetName} onChange={e => setForm(f => ({ ...f, assetName: e.target.value }))} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Bridge A21" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.assetType', lang)}</label>
-                  <select value={form.assetType} onChange={e => setForm(f => ({ ...f, assetType: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.assetType', lang)}</label>
+                  <select value={form.assetType} onChange={e => setForm(f => ({ ...f, assetType: e.target.value }))} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
                     {ASSET_TYPES.map(typ => <option key={typ} value={typ} className="bg-slate-900">{typ}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.locationName', lang)} *</label>
-                  <input value={form.locationName} onChange={e => setForm(f => ({ ...f, locationName: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Ziya Bunyadov Ave" />
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.locationName', lang)} *</label>
+                  <input value={form.locationName} onChange={e => setForm(f => ({ ...f, locationName: e.target.value }))} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Ziya Bunyadov Ave" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-2 flex items-center gap-1.5">
+                <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-2 flex items-center gap-1.5">
                   <MapPin size={14} /> {t('report.selectLocation', lang)}
                 </label>
-                <div className="h-56 rounded-lg overflow-hidden border border-white/10">
+                <div className="h-56 rounded-lg overflow-hidden border border-gray-200 dark:border-white/10">
                   <LocationPicker
                     onSelect={handleLocationSelect}
                     lat={form.latitude ? parseFloat(form.latitude) : undefined}
@@ -845,74 +845,74 @@ export default function AnalyzeImagePage() {
                   />
                 </div>
                 {form.latitude && form.longitude && (
-                  <p className="text-[11px] text-purple-400/60 mt-1.5">
+                  <p className="text-[11px] text-purple-600/60 dark:text-purple-400/60 mt-1.5">
                     {t('report.selected', lang)}: {form.latitude}, {form.longitude}
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="bg-[#16162a] rounded-xl border border-white/5 p-3 sm:p-5 space-y-4">
-              <h3 className="font-semibold text-blue-300 border-b border-white/5 pb-2">{t('report.issueDetails', lang)}</h3>
+            <div className="bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/5 p-3 sm:p-5 space-y-4">
+              <h3 className="font-semibold text-blue-700 dark:text-blue-300 border-b border-gray-200 dark:border-white/5 pb-2">{t('report.issueDetails', lang)}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.issueType', lang)}</label>
-                  <select value={form.issueType} onChange={e => setForm(f => ({ ...f, issueType: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.issueType', lang)}</label>
+                  <select value={form.issueType} onChange={e => setForm(f => ({ ...f, issueType: e.target.value }))} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
                     {ISSUE_TYPES.map(typ => <option key={typ} value={typ} className="bg-slate-900">{typ}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.visibilityLevel', lang)}</label>
-                  <select value={form.visibilityLevel} onChange={e => setForm(f => ({ ...f, visibilityLevel: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.visibilityLevel', lang)}</label>
+                  <select value={form.visibilityLevel} onChange={e => setForm(f => ({ ...f, visibilityLevel: e.target.value }))} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
                     {['Internal', 'Restricted', 'Critical'].map(v => <option key={v} value={v} className="bg-slate-900">{v}</option>)}
                   </select>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.description', lang)} *</label>
-                <textarea rows={3} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder={t('report.descPlaceholder', lang)} />
+                <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.description', lang)} *</label>
+                <textarea rows={3} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder={t('report.descPlaceholder', lang)} />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.createdBy', lang)} *</label>
-                  <input value={form.createdBy} onChange={e => setForm(f => ({ ...f, createdBy: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Your name" />
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.createdBy', lang)} *</label>
+                  <input value={form.createdBy} onChange={e => setForm(f => ({ ...f, createdBy: e.target.value }))} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Your name" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.assignedTeam', lang)}</label>
-                  <input value={form.assignedTeam} onChange={e => setForm(f => ({ ...f, assignedTeam: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Road Crew B" />
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.assignedTeam', lang)}</label>
+                  <input value={form.assignedTeam} onChange={e => setForm(f => ({ ...f, assignedTeam: e.target.value }))} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Road Crew B" />
                 </div>
               </div>
             </div>
 
             {/* Risk Assessment */}
-            <div className="bg-[#16162a] rounded-xl border border-white/5 p-3 sm:p-5 space-y-4">
-              <h3 className="font-semibold text-rose-300 border-b border-white/5 pb-2 flex items-center gap-2"><AlertTriangle size={18} className="text-rose-400" /> {t('report.riskAssessment', lang)}</h3>
-              <p className="text-xs text-slate-500">{t('report.riskSubtitle', lang)}</p>
+            <div className="bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/5 p-3 sm:p-5 space-y-4">
+              <h3 className="font-semibold text-rose-700 dark:text-rose-300 border-b border-gray-200 dark:border-white/5 pb-2 flex items-center gap-2"><AlertTriangle size={18} className="text-rose-500 dark:text-rose-400" /> {t('report.riskAssessment', lang)}</h3>
+              <p className="text-xs text-gray-500 dark:text-slate-500">{t('report.riskSubtitle', lang)}</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-2">{t('report.impactSeverity', lang)} *</label>
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-2">{t('report.impactSeverity', lang)} *</label>
                   <div className="flex flex-wrap gap-2">
                     {IMPACT_OPTIONS.map(o => (
                       <button key={o.value} type="button" onClick={() => setForm(f => ({ ...f, impact: o.value }))}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${form.impact === o.value ? 'bg-purple-600 border-purple-500 text-white' : 'bg-white/[0.03] border-white/10 text-slate-400 hover:bg-white/[0.06]'}`}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${form.impact === o.value ? 'bg-purple-600 border-purple-500 text-white' : 'bg-gray-50 dark:bg-white/[0.03] border-gray-200 dark:border-white/10 text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-white/[0.06]'}`}
                       >{o.label}</button>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-2">{t('report.likelihood', lang)} *</label>
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-2">{t('report.likelihood', lang)} *</label>
                   <div className="flex flex-wrap gap-2">
                     {LIKELIHOOD_OPTIONS.map(o => (
                       <button key={o.value} type="button" onClick={() => setForm(f => ({ ...f, likelihood: o.value }))}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${form.likelihood === o.value ? 'bg-purple-600 border-purple-500 text-white' : 'bg-white/[0.03] border-white/10 text-slate-400 hover:bg-white/[0.06]'}`}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${form.likelihood === o.value ? 'bg-purple-600 border-purple-500 text-white' : 'bg-gray-50 dark:bg-white/[0.03] border-gray-200 dark:border-white/10 text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-white/[0.06]'}`}
                       >{o.label}</button>
                     ))}
                   </div>
                 </div>
               </div>
               {riskLevel && (
-                <div className="bg-purple-950/30 rounded-lg p-4 border border-purple-500/10 flex items-center gap-4">
-                  <span className="text-xs text-slate-500">{t('report.assessedRisk', lang)}:</span>
+                <div className="bg-purple-50 dark:bg-purple-950/30 rounded-lg p-4 border border-purple-200 dark:border-purple-500/10 flex items-center gap-4">
+                  <span className="text-xs text-gray-500 dark:text-slate-500">{t('report.assessedRisk', lang)}:</span>
                   <span className={`text-sm px-3 py-1 rounded-full font-semibold border ${getRiskColor(riskLevel)}`}>{riskLevel}</span>
                 </div>
               )}
@@ -936,7 +936,7 @@ export default function AnalyzeImagePage() {
               <button
                 onClick={handleReset}
                 disabled={state === 'submitting'}
-                className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm text-slate-500 hover:text-slate-300 bg-white/5 hover:bg-white/10 transition-all"
+                className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm text-gray-500 dark:text-slate-500 hover:text-gray-700 dark:text-slate-300 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:bg-white/10 transition-all"
               >
                 <RefreshCw size={14} /> {t('imgAI.reset', lang)}
               </button>
@@ -947,10 +947,10 @@ export default function AnalyzeImagePage() {
         {/* Submitted success */}
         {state === 'submitted' && (
           <div className="flex items-center justify-center py-16">
-            <div className="bg-green-950/30 border border-green-500/20 rounded-xl p-6 text-center">
-              <CheckCircle2 size={40} className="text-green-400 mx-auto mb-3" />
-              <p className="text-green-400 font-semibold text-lg">{t('report.success', lang)}</p>
-              <p className="text-green-500/70 text-sm mt-1">{t('report.redirecting', lang)}</p>
+            <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-500/20 rounded-xl p-6 text-center">
+              <CheckCircle2 size={40} className="text-green-500 dark:text-green-400 mx-auto mb-3" />
+              <p className="text-green-600 dark:text-green-400 font-semibold text-lg">{t('report.success', lang)}</p>
+              <p className="text-green-600/70 dark:text-green-500/70 text-sm mt-1">{t('report.redirecting', lang)}</p>
             </div>
           </div>
         )}

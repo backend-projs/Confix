@@ -2,18 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
 import { COMPANIES, ROLES, cn } from '@/lib/utils';
 import { t, LANG_OPTIONS } from '@/lib/i18n';
 import {
   Gauge, PenLine, ClipboardList, HardHat, Globe2, BookLock,
-  Building, UserCog, Mic, ScanEye, Menu, X,
+  Building, UserCog, Mic, ScanEye, Menu, X, Sun, Moon,
+  LogIn, LogOut, Shield, Users, HardHat as WorkerIcon,
 } from 'lucide-react';
 
-const navItems = [
+const baseNavItems = [
   { href: '/dashboard', tKey: 'nav.dashboard', icon: Gauge },
-  { href: '/report', tKey: 'nav.newReport', icon: PenLine },
   { href: '/reports', tKey: 'nav.reports', icon: ClipboardList },
   { href: '/maintenance', tKey: 'nav.maintenance', icon: HardHat },
   { href: '/map', tKey: 'nav.map', icon: Globe2 },
@@ -24,7 +24,8 @@ const navItems = [
 
 export default function TopBar() {
   const pathname = usePathname();
-  const { selectedCompany, setSelectedCompany, selectedRole, setSelectedRole, lang, setLang } = useAppContext();
+  const router = useRouter();
+  const { selectedCompany, setSelectedCompany, selectedRole, setSelectedRole, lang, setLang, theme, toggleTheme, user, logout } = useAppContext();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // Close mobile menu on route change
@@ -37,23 +38,39 @@ export default function TopBar() {
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
 
+  // Build nav items based on role
+  const navItems = [...baseNavItems];
+  if (user?.role === 'worker') {
+    navItems.splice(1, 0, { href: '/worker-report', tKey: 'nav.newReport', icon: PenLine });
+  } else {
+    navItems.splice(1, 0, { href: '/report', tKey: 'nav.newReport', icon: PenLine });
+  }
+  if (user?.role === 'superadmin') {
+    navItems.push({ href: '/superadmin', tKey: 'nav.superadmin', icon: Shield });
+  }
+  if (user?.role === 'admin') {
+    navItems.push({ href: '/admin/workers', tKey: 'nav.workers', icon: Users });
+  }
+
+  const showLegacySelectors = !user;
+
   return (
     <>
-      <header className="sticky top-0 z-50 bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] shadow-lg shadow-purple-950/20">
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 dark:border-transparent dark:bg-gradient-to-r dark:from-[#0f0c29] dark:via-[#302b63] dark:to-[#24243e] shadow-sm dark:shadow-lg dark:shadow-purple-950/20 transition-colors">
         <div className="flex items-center justify-between px-3 sm:px-6 h-14 sm:h-16">
           {/* Logo */}
-          <Link href="/dashboard" className="flex items-center gap-2 mr-4 lg:mr-8 shrink-0">
+          <Link href={user ? '/dashboard' : '/login'} className="flex items-center gap-2 mr-4 lg:mr-8 shrink-0">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
               <span className="text-white font-black text-sm">C</span>
             </div>
-            <span className="text-white font-bold text-lg tracking-tight">
-              Con<span className="text-purple-400">fix</span>
+            <span className="text-gray-900 dark:text-white font-bold text-lg tracking-tight">
+              Con<span className="text-purple-600 dark:text-purple-400">fix</span>
             </span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1 flex-1 min-w-0">
-            {navItems.map((item) => {
+            {user && navItems.map((item: any) => {
               const active = pathname === item.href;
               return (
                 <Link
@@ -62,8 +79,8 @@ export default function TopBar() {
                   className={cn(
                     'flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap',
                     active
-                      ? 'bg-white/15 text-white shadow-inner shadow-purple-500/10'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                      ? 'bg-purple-50 text-purple-700 dark:bg-white/15 dark:text-white shadow-inner shadow-purple-500/10'
+                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
                   )}
                 >
                   <item.icon size={16} />
@@ -76,7 +93,7 @@ export default function TopBar() {
           {/* Desktop Selectors */}
           <div className="hidden lg:flex items-center gap-3">
             {/* Language selector */}
-            <div className="flex items-center gap-0.5 bg-white/[0.06] rounded-lg p-0.5 border border-white/10">
+            <div className="flex items-center gap-0.5 bg-gray-100 dark:bg-white/[0.06] rounded-lg p-0.5 border border-gray-200 dark:border-white/10">
               {LANG_OPTIONS.map((l) => (
                 <button
                   key={l.code}
@@ -84,8 +101,8 @@ export default function TopBar() {
                   className={cn(
                     'flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-all',
                     lang === l.code
-                      ? 'bg-purple-600/40 text-white shadow-sm'
-                      : 'text-slate-500 hover:text-white hover:bg-white/5'
+                      ? 'bg-purple-600 text-white dark:bg-purple-600/40 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-200 dark:text-slate-500 dark:hover:text-white dark:hover:bg-white/5'
                   )}
                   aria-label={`Switch to ${l.label}`}
                 >
@@ -95,42 +112,85 @@ export default function TopBar() {
               ))}
             </div>
 
-            <div className="flex items-center gap-1.5">
-              <Building size={14} className="text-purple-400" />
-              <select
-                value={selectedCompany}
-                onChange={(e) => setSelectedCompany(e.target.value)}
-                className="text-xs bg-white/10 border border-white/10 text-white rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none cursor-pointer"
+            {showLegacySelectors && (
+              <>
+                <div className="flex items-center gap-1.5">
+                  <Building size={14} className="text-purple-600 dark:text-purple-400" />
+                  <select
+                    value={selectedCompany}
+                    onChange={(e) => setSelectedCompany(e.target.value)}
+                    className="text-xs bg-gray-100 border border-gray-200 text-gray-800 dark:bg-white/10 dark:border-white/10 dark:text-white rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none cursor-pointer"
+                  >
+                    {COMPANIES.map((c) => (
+                      <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-gray-900 dark:text-white">{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <UserCog size={14} className="text-blue-600 dark:text-blue-400" />
+                  <select
+                    value={selectedRole}
+                    onChange={(e) => setSelectedRole(e.target.value)}
+                    className="text-xs bg-gray-100 border border-gray-200 text-gray-800 dark:bg-white/10 dark:border-white/10 dark:text-white rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer"
+                  >
+                    {ROLES.map((r) => (
+                      <option key={r} value={r} className="bg-white dark:bg-slate-900 text-gray-900 dark:text-white">{r}</option>
+                    ))}
+                  </select>
+                </div>
+              </>
+            )}
+
+            {user && (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 bg-gray-100 dark:bg-white/[0.06] rounded-lg px-2.5 py-1.5 border border-gray-200 dark:border-white/10">
+                  <WorkerIcon size={14} className="text-purple-600 dark:text-purple-400" />
+                  <span className="text-xs font-medium text-gray-700 dark:text-slate-300">{user.full_name}</span>
+                  <span className="text-[10px] px-1 py-0.5 rounded bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 font-medium capitalize">
+                    {user.role}
+                  </span>
+                </div>
+                <button
+                  onClick={() => { logout(); router.push('/login'); }}
+                  className="p-2 rounded-lg bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-600 dark:bg-white/[0.06] dark:hover:bg-red-500/20 dark:text-slate-300 dark:hover:text-red-400 transition-colors"
+                  aria-label="Logout"
+                  title="Logout"
+                >
+                  <LogOut size={16} />
+                </button>
+              </div>
+            )}
+
+            {!user && (
+              <Link
+                href="/login"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-medium hover:bg-purple-500 transition-colors"
               >
-                {COMPANIES.map((c) => (
-                  <option key={c.id} value={c.id} className="bg-slate-900 text-white">{c.name}</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <UserCog size={14} className="text-blue-400" />
-              <select
-                value={selectedRole}
-                onChange={(e) => setSelectedRole(e.target.value)}
-                className="text-xs bg-white/10 border border-white/10 text-white rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer"
-              >
-                {ROLES.map((r) => (
-                  <option key={r} value={r} className="bg-slate-900 text-white">{r}</option>
-                ))}
-              </select>
-            </div>
+                <LogIn size={14} />
+                Sign In
+              </Link>
+            )}
+
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg transition-colors bg-gray-100 hover:bg-gray-200 text-gray-600 dark:bg-white/[0.06] dark:hover:bg-white/10 dark:text-slate-300"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
           </div>
 
           {/* Mobile: language flags + hamburger */}
           <div className="flex lg:hidden items-center gap-2">
-            <div className="flex items-center gap-0.5 bg-white/[0.06] rounded-lg p-0.5 border border-white/10">
+            <div className="flex items-center gap-0.5 bg-gray-100 dark:bg-white/[0.06] rounded-lg p-0.5 border border-gray-200 dark:border-white/10">
               {LANG_OPTIONS.map((l) => (
                 <button
                   key={l.code}
                   onClick={() => setLang(l.code)}
                   className={cn(
                     'flex items-center px-1.5 py-1 rounded-md transition-all',
-                    lang === l.code ? 'bg-purple-600/40' : 'opacity-50'
+                    lang === l.code ? 'bg-purple-600 dark:bg-purple-600/40' : 'opacity-50'
                   )}
                   aria-label={`Switch to ${l.label}`}
                 >
@@ -139,8 +199,15 @@ export default function TopBar() {
               ))}
             </div>
             <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg transition-colors text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-white/10"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+            <button
               onClick={() => setMobileOpen(true)}
-              className="p-2 rounded-lg text-slate-300 hover:bg-white/10 transition-colors"
+              className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-white/10 transition-colors"
               aria-label="Open menu"
             >
               <Menu size={22} />
@@ -152,19 +219,19 @@ export default function TopBar() {
       {/* Mobile Drawer Overlay */}
       {mobileOpen && (
         <div className="fixed inset-0 z-[60] lg:hidden" onClick={() => setMobileOpen(false)}>
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-black/30 dark:bg-black/60 backdrop-blur-sm" />
           <div
-            className="absolute right-0 top-0 bottom-0 w-72 bg-gradient-to-b from-[#0f0c29] via-[#1a1640] to-[#0e0e1a] shadow-2xl shadow-purple-950/30 overflow-y-auto"
+            className="absolute right-0 top-0 bottom-0 w-72 bg-white dark:bg-gradient-to-b dark:from-[#0f0c29] dark:via-[#1a1640] dark:to-[#0e0e1a] shadow-2xl dark:shadow-purple-950/30 overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Drawer header */}
-            <div className="flex items-center justify-between px-4 h-14 border-b border-white/5">
-              <span className="text-white font-bold text-lg tracking-tight">
-                Con<span className="text-purple-400">fix</span>
+            <div className="flex items-center justify-between px-4 h-14 border-b border-gray-200 dark:border-white/5">
+              <span className="text-gray-900 dark:text-white font-bold text-lg tracking-tight">
+                Con<span className="text-purple-600 dark:text-purple-400">fix</span>
               </span>
               <button
                 onClick={() => setMobileOpen(false)}
-                className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                className="p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/10 transition-colors"
                 aria-label="Close menu"
               >
                 <X size={20} />
@@ -173,7 +240,7 @@ export default function TopBar() {
 
             {/* Nav links */}
             <nav className="px-3 py-3 space-y-1">
-              {navItems.map((item) => {
+              {user && navItems.map((item: any) => {
                 const active = pathname === item.href;
                 return (
                   <Link
@@ -182,8 +249,8 @@ export default function TopBar() {
                     className={cn(
                       'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
                       active
-                        ? 'bg-white/15 text-white'
-                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                        ? 'bg-purple-50 text-purple-700 dark:bg-white/15 dark:text-white'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
                     )}
                   >
                     <item.icon size={18} />
@@ -191,38 +258,68 @@ export default function TopBar() {
                   </Link>
                 );
               })}
+              {!user && (
+                <Link
+                  href="/login"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-500/10"
+                >
+                  <LogIn size={18} />
+                  <span>Sign In</span>
+                </Link>
+              )}
             </nav>
 
-            {/* Mobile selectors */}
-            <div className="px-4 py-4 mt-2 border-t border-white/5 space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-[11px] uppercase tracking-wider text-slate-500 font-medium flex items-center gap-1.5">
-                  <Building size={12} className="text-purple-400" /> Company
-                </label>
-                <select
-                  value={selectedCompany}
-                  onChange={(e) => setSelectedCompany(e.target.value)}
-                  className="w-full text-sm bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                >
-                  {COMPANIES.map((c) => (
-                    <option key={c.id} value={c.id} className="bg-slate-900 text-white">{c.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[11px] uppercase tracking-wider text-slate-500 font-medium flex items-center gap-1.5">
-                  <UserCog size={12} className="text-blue-400" /> Role
-                </label>
-                <select
-                  value={selectedRole}
-                  onChange={(e) => setSelectedRole(e.target.value)}
-                  className="w-full text-sm bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {ROLES.map((r) => (
-                    <option key={r} value={r} className="bg-slate-900 text-white">{r}</option>
-                  ))}
-                </select>
-              </div>
+            {/* Mobile selectors / user info */}
+            <div className="px-4 py-4 mt-2 border-t border-gray-200 dark:border-white/5 space-y-4">
+              {user && (
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center">
+                    <WorkerIcon size={14} className="text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{user.full_name}</p>
+                    <p className="text-xs text-gray-500 dark:text-slate-500 capitalize">{user.role}</p>
+                  </div>
+                  <button
+                    onClick={() => { logout(); router.push('/login'); setMobileOpen(false); }}
+                    className="p-2 rounded-lg hover:bg-red-50 text-gray-500 hover:text-red-600 dark:hover:bg-red-500/10 dark:text-slate-400 dark:hover:text-red-400 transition-colors"
+                  >
+                    <LogOut size={16} />
+                  </button>
+                </div>
+              )}
+              {!user && (
+                <>
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] uppercase tracking-wider text-gray-500 dark:text-slate-500 font-medium flex items-center gap-1.5">
+                      <Building size={12} className="text-purple-600 dark:text-purple-400" /> Company
+                    </label>
+                    <select
+                      value={selectedCompany}
+                      onChange={(e) => setSelectedCompany(e.target.value)}
+                      className="w-full text-sm bg-gray-100 border border-gray-200 text-gray-900 dark:bg-white/10 dark:border-white/10 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    >
+                      {COMPANIES.map((c) => (
+                        <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-gray-900 dark:text-white">{c.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] uppercase tracking-wider text-gray-500 dark:text-slate-500 font-medium flex items-center gap-1.5">
+                      <UserCog size={12} className="text-blue-600 dark:text-blue-400" /> Role
+                    </label>
+                    <select
+                      value={selectedRole}
+                      onChange={(e) => setSelectedRole(e.target.value)}
+                      className="w-full text-sm bg-gray-100 border border-gray-200 text-gray-900 dark:bg-white/10 dark:border-white/10 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      {ROLES.map((r) => (
+                        <option key={r} value={r} className="bg-white dark:bg-slate-900 text-gray-900 dark:text-white">{r}</option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

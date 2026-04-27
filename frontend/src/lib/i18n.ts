@@ -15,6 +15,8 @@ const translations: Record<string, Record<Lang, string>> = {
   'nav.map': { en: 'Map', ru: 'Карта', az: 'Xəritə' },
   'nav.voiceReport': { en: 'Voice Report', ru: 'Голосовой отчёт', az: 'Səsli hesabat' },
   'nav.governance': { en: 'Governance', ru: 'Управление', az: 'İdarəetmə' },
+  'nav.superadmin': { en: 'Superadmin', ru: 'Суперадмин', az: 'Superadmin' },
+  'nav.workers': { en: 'Workers', ru: 'Рабочие', az: 'İşçilər' },
 
   // ── Dashboard ──
   'dashboard.title': { en: 'Operations Dashboard', ru: 'Операционная панель', az: 'Əməliyyat paneli' },

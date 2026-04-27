@@ -14,7 +14,7 @@ import { t } from '@/lib/i18n';
 
 const LocationPicker = dynamic(() => import('@/components/LocationPicker'), {
   ssr: false,
-  loading: () => <div className="h-full flex items-center justify-center text-slate-500 text-xs">Loading map...</div>,
+  loading: () => <div className="h-full flex items-center justify-center text-gray-400 dark:text-slate-500 text-xs">Loading map...</div>,
 });
 
 export default function NewReportPage() {
@@ -98,8 +98,8 @@ export default function NewReportPage() {
 
   if (success) return (
     <div className="flex items-center justify-center h-64">
-      <div className="bg-green-950/30 border border-green-500/20 rounded-xl p-6 text-center">
-        <p className="text-green-400 font-semibold text-lg">{t('report.success', lang)}</p>
+      <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-500/20 rounded-xl p-6 text-center">
+        <p className="text-green-600 dark:text-green-400 font-semibold text-lg">{t('report.success', lang)}</p>
         <p className="text-green-500/70 text-sm mt-1">{t('report.redirecting', lang)}</p>
       </div>
     </div>
@@ -107,47 +107,47 @@ export default function NewReportPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#302b63] to-[#0f172a] p-4 sm:p-6">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-[#1a1145] dark:via-[#302b63] dark:to-[#0f172a] p-4 sm:p-6 border border-purple-100 dark:border-transparent">
         <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="relative z-10">
-          <h1 className="text-xl sm:text-2xl font-bold text-white">{t('report.title', lang)}</h1>
-          <p className="text-purple-300/70 text-xs sm:text-sm mt-1">{t('report.subtitle', lang)}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{t('report.title', lang)}</h1>
+          <p className="text-purple-600/60 dark:text-purple-300/70 text-xs sm:text-sm mt-1">{t('report.subtitle', lang)}</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* A: Asset Information */}
-        <div className="bg-[#16162a] rounded-xl border border-white/5 p-3 sm:p-5 space-y-4">
-          <h2 className="font-semibold text-purple-300 border-b border-white/5 pb-2">{t('report.assetInfo', lang)}</h2>
+        <div className="bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/5 p-3 sm:p-5 space-y-4 shadow-sm dark:shadow-none">
+          <h2 className="font-semibold text-purple-700 dark:text-purple-300 border-b border-gray-200 dark:border-white/5 pb-2">{t('report.assetInfo', lang)}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.company', lang)}</label>
-              <select value={form.tenantId} onChange={e => handleCompany(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                {COMPANIES.filter(c => c.id !== 'all').map(c => <option key={c.id} value={c.id} className="bg-slate-900">{c.name}</option>)}
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.company', lang)}</label>
+              <select value={form.tenantId} onChange={e => handleCompany(e.target.value)} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                {COMPANIES.filter(c => c.id !== 'all').map(c => <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900">{c.name}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.assetName', lang)} *</label>
-              <input required value={form.assetName} onChange={e => setForm(f => ({ ...f, assetName: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Bridge A21" />
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.assetName', lang)} *</label>
+              <input required value={form.assetName} onChange={e => setForm(f => ({ ...f, assetName: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Bridge A21" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.assetType', lang)}</label>
-              <select value={form.assetType} onChange={e => setForm(f => ({ ...f, assetType: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                {ASSET_TYPES.map(typ => <option key={typ} value={typ} className="bg-slate-900">{typ}</option>)}
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.assetType', lang)}</label>
+              <select value={form.assetType} onChange={e => setForm(f => ({ ...f, assetType: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                {ASSET_TYPES.map(typ => <option key={typ} value={typ} className="bg-white dark:bg-slate-900">{typ}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.locationName', lang)} *</label>
-              <input required value={form.locationName} onChange={e => setForm(f => ({ ...f, locationName: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Ziya Bunyadov Ave" />
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.locationName', lang)} *</label>
+              <input required value={form.locationName} onChange={e => setForm(f => ({ ...f, locationName: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Ziya Bunyadov Ave" />
             </div>
           </div>
 
           {/* Map Location Picker */}
           <div>
-            <label className="block text-sm font-medium text-slate-400 mb-2 flex items-center gap-1.5">
+            <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-2 flex items-center gap-1.5">
               <MapPin size={14} /> {t('report.selectLocation', lang)}
             </label>
-            <div className="h-44 sm:h-56 rounded-lg overflow-hidden border border-white/10">
+            <div className="h-44 sm:h-56 rounded-lg overflow-hidden border border-gray-200 dark:border-white/10">
               <LocationPicker
                 onSelect={handleLocationSelect}
                 lat={form.latitude ? parseFloat(form.latitude) : undefined}
@@ -155,7 +155,7 @@ export default function NewReportPage() {
               />
             </div>
             {form.latitude && form.longitude && (
-              <p className="text-[11px] text-purple-400/60 mt-1.5">
+              <p className="text-[11px] text-purple-600/60 dark:text-purple-400/60 mt-1.5">
                 {t('report.selected', lang)}: {form.latitude}, {form.longitude}
               </p>
             )}
@@ -163,114 +163,114 @@ export default function NewReportPage() {
         </div>
 
         {/* B: Issue Details */}
-        <div className="bg-[#16162a] rounded-xl border border-white/5 p-3 sm:p-5 space-y-4">
-          <h2 className="font-semibold text-blue-300 border-b border-white/5 pb-2">{t('report.issueDetails', lang)}</h2>
+        <div className="bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/5 p-3 sm:p-5 space-y-4 shadow-sm dark:shadow-none">
+          <h2 className="font-semibold text-blue-600 dark:text-blue-300 border-b border-gray-200 dark:border-white/5 pb-2">{t('report.issueDetails', lang)}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.issueType', lang)}</label>
-              <select value={form.issueType} onChange={e => setForm(f => ({ ...f, issueType: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                {ISSUE_TYPES.map(typ => <option key={typ} value={typ} className="bg-slate-900">{typ}</option>)}
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.issueType', lang)}</label>
+              <select value={form.issueType} onChange={e => setForm(f => ({ ...f, issueType: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                {ISSUE_TYPES.map(typ => <option key={typ} value={typ} className="bg-white dark:bg-slate-900">{typ}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.visibilityLevel', lang)}</label>
-              <select value={form.visibilityLevel} onChange={e => setForm(f => ({ ...f, visibilityLevel: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                {['Internal', 'Restricted', 'Critical'].map(v => <option key={v} value={v} className="bg-slate-900">{v}</option>)}
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.visibilityLevel', lang)}</label>
+              <select value={form.visibilityLevel} onChange={e => setForm(f => ({ ...f, visibilityLevel: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                {['Internal', 'Restricted', 'Critical'].map(v => <option key={v} value={v} className="bg-white dark:bg-slate-900">{v}</option>)}
               </select>
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.description', lang)} *</label>
-            <textarea required rows={3} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder={t('report.descPlaceholder', lang)} />
+            <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.description', lang)} *</label>
+            <textarea required rows={3} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder={t('report.descPlaceholder', lang)} />
           </div>
 
           {/* Image upload with metadata extraction */}
           <div>
-            <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.attachImage', lang)}</label>
+            <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.attachImage', lang)}</label>
             <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
             <div className="flex items-center gap-3">
-              <button type="button" onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 hover:bg-white/10 transition-colors">
+              <button type="button" onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-3 py-2 bg-gray-100 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-white/10 transition-colors">
                 <ImagePlus size={15} /> {t('report.chooseImage', lang)}
               </button>
               {form.imageName && (
-                <div className="flex items-center gap-2 text-xs text-purple-400">
+                <div className="flex items-center gap-2 text-xs text-purple-600 dark:text-purple-400">
                   <span>{form.imageName}</span>
-                  <button type="button" onClick={() => { setForm(f => ({ ...f, imageName: '' })); setImagePreview(null); }} className="text-slate-500 hover:text-white"><X size={12} /></button>
+                  <button type="button" onClick={() => { setForm(f => ({ ...f, imageName: '' })); setImagePreview(null); }} className="text-gray-400 hover:text-gray-900 dark:text-slate-500 dark:hover:text-white"><X size={12} /></button>
                 </div>
               )}
             </div>
             {imagePreview && (
-              <div className="mt-2 relative w-32 h-20 rounded-lg overflow-hidden border border-white/10">
+              <div className="mt-2 relative w-32 h-20 rounded-lg overflow-hidden border border-gray-200 dark:border-white/10">
                 <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
               </div>
             )}
-            <p className="text-[10px] text-slate-600 mt-1">{t('report.gpsHint', lang)}</p>
+            <p className="text-[10px] text-gray-400 dark:text-slate-600 mt-1">{t('report.gpsHint', lang)}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.createdBy', lang)} *</label>
-              <input required value={form.createdBy} onChange={e => setForm(f => ({ ...f, createdBy: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Your name" />
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.createdBy', lang)} *</label>
+              <input required value={form.createdBy} onChange={e => setForm(f => ({ ...f, createdBy: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Your name" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">{t('report.assignedTeam', lang)}</label>
-              <input value={form.assignedTeam} onChange={e => setForm(f => ({ ...f, assignedTeam: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Road Crew B" />
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">{t('report.assignedTeam', lang)}</label>
+              <input value={form.assignedTeam} onChange={e => setForm(f => ({ ...f, assignedTeam: e.target.value }))} className="w-full bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Road Crew B" />
             </div>
           </div>
         </div>
 
         {/* C: AI Assistant */}
-        <div className="bg-[#16162a] rounded-xl border border-white/5 p-3 sm:p-5 space-y-4">
-          <h2 className="font-semibold text-indigo-300 border-b border-white/5 pb-2 flex items-center gap-2"><Bot size={18} className="text-indigo-400" /> {t('report.aiAssistant', lang)}</h2>
+        <div className="bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/5 p-3 sm:p-5 space-y-4 shadow-sm dark:shadow-none">
+          <h2 className="font-semibold text-indigo-600 dark:text-indigo-300 border-b border-gray-200 dark:border-white/5 pb-2 flex items-center gap-2"><Bot size={18} className="text-indigo-500 dark:text-indigo-400" /> {t('report.aiAssistant', lang)}</h2>
           <button type="button" onClick={handleAI} disabled={aiLoading || !form.description} className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 flex items-center gap-2 transition-all">
             {aiLoading ? <Loader2 size={16} className="animate-spin" /> : <Bot size={16} />}
             {aiLoading ? t('report.aiLoading', lang) : t('report.aiButton', lang)}
           </button>
           {aiSuggestions && (
-            <div className="bg-indigo-950/30 border border-indigo-500/15 rounded-lg p-4 space-y-2">
-              <div><span className="text-xs font-semibold text-slate-400">{t('report.suggestedCategory', lang)}:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedIssueCategory}</span></div>
-              <div><span className="text-xs font-semibold text-slate-400">{t('report.suggestedSummary', lang)}:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedSummary}</span></div>
-              <div><span className="text-xs font-semibold text-slate-400">{t('report.suggestedPPE', lang)}:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedPPE?.join(', ')}</span></div>
-              <div><span className="text-xs font-semibold text-slate-400">{t('report.safetyInstructions', lang)}:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedSafetyInstructions?.join(', ')}</span></div>
-              <div><span className="text-xs font-semibold text-slate-400">{t('report.suggestedNextStep', lang)}:</span> <span className="text-sm text-slate-200">{aiSuggestions.suggestedNextStep}</span></div>
-              <p className="text-xs text-slate-500 italic mt-2 border-t border-white/5 pt-2">{t('report.aiDisclaimer', lang)}</p>
+            <div className="bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-500/15 rounded-lg p-4 space-y-2">
+              <div><span className="text-xs font-semibold text-gray-500 dark:text-slate-400">{t('report.suggestedCategory', lang)}:</span> <span className="text-sm text-gray-800 dark:text-slate-200">{aiSuggestions.suggestedIssueCategory}</span></div>
+              <div><span className="text-xs font-semibold text-gray-500 dark:text-slate-400">{t('report.suggestedSummary', lang)}:</span> <span className="text-sm text-gray-800 dark:text-slate-200">{aiSuggestions.suggestedSummary}</span></div>
+              <div><span className="text-xs font-semibold text-gray-500 dark:text-slate-400">{t('report.suggestedPPE', lang)}:</span> <span className="text-sm text-gray-800 dark:text-slate-200">{aiSuggestions.suggestedPPE?.join(', ')}</span></div>
+              <div><span className="text-xs font-semibold text-gray-500 dark:text-slate-400">{t('report.safetyInstructions', lang)}:</span> <span className="text-sm text-gray-800 dark:text-slate-200">{aiSuggestions.suggestedSafetyInstructions?.join(', ')}</span></div>
+              <div><span className="text-xs font-semibold text-gray-500 dark:text-slate-400">{t('report.suggestedNextStep', lang)}:</span> <span className="text-sm text-gray-800 dark:text-slate-200">{aiSuggestions.suggestedNextStep}</span></div>
+              <p className="text-xs text-gray-500 dark:text-slate-500 italic mt-2 border-t border-gray-200 dark:border-white/5 pt-2">{t('report.aiDisclaimer', lang)}</p>
             </div>
           )}
         </div>
 
         {/* D: Risk Assessment — label-only, no numbers */}
-        <div className="bg-[#16162a] rounded-xl border border-white/5 p-3 sm:p-5 space-y-4">
-          <h2 className="font-semibold text-rose-300 border-b border-white/5 pb-2 flex items-center gap-2"><AlertTriangle size={18} className="text-rose-400" /> {t('report.riskAssessment', lang)}</h2>
-          <p className="text-xs text-slate-500">{t('report.riskSubtitle', lang)}</p>
+        <div className="bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/5 p-3 sm:p-5 space-y-4 shadow-sm dark:shadow-none">
+          <h2 className="font-semibold text-rose-600 dark:text-rose-300 border-b border-gray-200 dark:border-white/5 pb-2 flex items-center gap-2"><AlertTriangle size={18} className="text-rose-500 dark:text-rose-400" /> {t('report.riskAssessment', lang)}</h2>
+          <p className="text-xs text-gray-500 dark:text-slate-500">{t('report.riskSubtitle', lang)}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-2">{t('report.impactSeverity', lang)} *</label>
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-2">{t('report.impactSeverity', lang)} *</label>
               <div className="flex flex-wrap gap-2">
                 {IMPACT_OPTIONS.map(o => (
                   <button key={o.value} type="button" onClick={() => setForm(f => ({ ...f, impact: o.value }))}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${form.impact === o.value ? 'bg-purple-600 border-purple-500 text-white' : 'bg-white/[0.03] border-white/10 text-slate-400 hover:bg-white/[0.06]'}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${form.impact === o.value ? 'bg-purple-600 border-purple-500 text-white' : 'bg-gray-50 border-gray-200 dark:bg-white/[0.03] dark:border-white/10 text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-white/[0.06]'}`}
                   >{o.label}</button>
                 ))}
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-2">{t('report.likelihood', lang)} *</label>
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-2">{t('report.likelihood', lang)} *</label>
               <div className="flex flex-wrap gap-2">
                 {LIKELIHOOD_OPTIONS.map(o => (
                   <button key={o.value} type="button" onClick={() => setForm(f => ({ ...f, likelihood: o.value }))}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${form.likelihood === o.value ? 'bg-purple-600 border-purple-500 text-white' : 'bg-white/[0.03] border-white/10 text-slate-400 hover:bg-white/[0.06]'}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${form.likelihood === o.value ? 'bg-purple-600 border-purple-500 text-white' : 'bg-gray-50 border-gray-200 dark:bg-white/[0.03] dark:border-white/10 text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-white/[0.06]'}`}
                   >{o.label}</button>
                 ))}
               </div>
             </div>
           </div>
           {riskLevel && (
-            <div className="bg-purple-950/30 rounded-lg p-4 border border-purple-500/10 flex items-center gap-4">
-              <span className="text-xs text-slate-500">{t('report.assessedRisk', lang)}:</span>
+            <div className="bg-purple-50 dark:bg-purple-950/30 rounded-lg p-4 border border-purple-200 dark:border-purple-500/10 flex items-center gap-4">
+              <span className="text-xs text-gray-500 dark:text-slate-500">{t('report.assessedRisk', lang)}:</span>
               <span className={`text-sm px-3 py-1 rounded-full font-semibold border ${getRiskColor(riskLevel)}`}>{riskLevel}</span>
             </div>
           )}
-          <p className="text-xs text-slate-500 italic">{t('report.riskDisclaimer', lang)}</p>
+          <p className="text-xs text-gray-500 dark:text-slate-500 italic">{t('report.riskDisclaimer', lang)}</p>
         </div>
 
         {/* E: Submit */}

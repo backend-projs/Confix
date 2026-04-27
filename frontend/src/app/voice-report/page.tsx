@@ -228,7 +228,7 @@ export default function VoiceReportPage() {
         <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 via-violet-400 to-blue-400 bg-clip-text text-transparent">
           {t('voice.title', lang)}
         </h1>
-        <p className="text-slate-500 text-sm mt-1">{t('voice.subtitle', lang)}</p>
+        <p className="text-gray-500 dark:text-slate-500 text-sm mt-1">{t('voice.subtitle', lang)}</p>
       </div>
 
       {/* Main Button Area */}
@@ -294,14 +294,14 @@ export default function VoiceReportPage() {
               <p className="text-purple-300 text-lg font-mono font-semibold tracking-wider">
                 {formatDuration(recordingDuration)}
               </p>
-              <p className="text-slate-500 text-xs mt-1">{t('voice.recordingInProgress', lang)}</p>
+              <p className="text-gray-500 dark:text-slate-500 text-xs mt-1">{t('voice.recordingInProgress', lang)}</p>
             </div>
           )}
 
           {/* Instructions */}
           {state === 'idle' && (
             <div className="max-w-md text-center px-4 space-y-3">
-              <p className="text-slate-400 text-sm leading-relaxed">
+              <p className="text-gray-500 dark:text-slate-400 text-sm leading-relaxed">
                 {t('voice.pressAndHold', lang)}
               </p>
               <button
@@ -319,22 +319,22 @@ export default function VoiceReportPage() {
       {manualMode && (state === 'idle' || state === 'processing') && (
         <div className="w-full max-w-2xl mx-auto mt-8 space-y-4">
           {!supported && (
-            <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
-              <AlertCircle size={18} className="text-amber-400 mt-0.5 shrink-0" />
-              <p className="text-amber-300/80 text-sm">
+            <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
+              <AlertCircle size={18} className="text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+              <p className="text-amber-700 dark:text-amber-300/80 text-sm">
                 {t('voice.noSpeechSupport', lang)}
               </p>
             </div>
           )}
 
-          <div className="bg-[#16162a] rounded-2xl border border-white/[0.04] p-6 space-y-4">
-            <label className="block text-sm font-medium text-slate-300">{t('voice.describeProblem', lang)}</label>
+          <div className="bg-white dark:bg-[#16162a] rounded-2xl border border-gray-200 dark:border-white/[0.04] p-6 space-y-4">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">{t('voice.describeProblem', lang)}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={5}
               placeholder={t('voice.descPlaceholder', lang)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+              className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
             />
             <div className="flex items-center gap-3">
               <button
@@ -344,7 +344,7 @@ export default function VoiceReportPage() {
                   'flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all',
                   description.trim() && state !== 'processing'
                     ? 'bg-purple-600 hover:bg-purple-500 text-white'
-                    : 'bg-white/5 text-slate-600 cursor-not-allowed'
+                    : 'bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-slate-500 cursor-not-allowed'
                 )}
               >
                 {state === 'processing' ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
@@ -366,15 +366,15 @@ export default function VoiceReportPage() {
       {/* Error banner */}
       {error && (
         <div className="w-full max-w-2xl mx-auto mt-4">
-          <div className="flex items-start gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20">
-            <AlertCircle size={18} className="text-red-400 mt-0.5 shrink-0" />
+          <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20">
+            <AlertCircle size={18} className="text-red-500 dark:text-red-400 mt-0.5 shrink-0" />
             <div className="flex-1">
-              <p className="text-red-300/80 text-sm">{error}</p>
+              <p className="text-red-600 dark:text-red-300/80 text-sm">{error}</p>
             </div>
             {state === 'idle' && (
               <button
                 onClick={handleReset}
-                className="flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 transition-colors"
+                className="flex items-center gap-1.5 text-xs text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
               >
                 <RefreshCw size={14} /> {t('voice.retry', lang)}
               </button>
@@ -386,26 +386,26 @@ export default function VoiceReportPage() {
       {/* Filled form */}
       {(state === 'filled' || state === 'submitted') && (
         <div className="w-full max-w-2xl mx-auto mt-6 space-y-6">
-          <div className="bg-[#16162a] rounded-2xl border border-white/[0.04] p-6 space-y-5">
-            <h2 className="text-lg font-semibold text-white">{t('voice.problemReport', lang)}</h2>
+          <div className="bg-white dark:bg-[#16162a] rounded-2xl border border-gray-200 dark:border-white/[0.04] p-6 space-y-5 shadow-sm dark:shadow-none">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('voice.problemReport', lang)}</h2>
 
             {/* Corrected transcript comparison */}
             {correctedTranscript && rawTranscript && correctedTranscript !== rawTranscript && (
-              <div className="space-y-2 bg-indigo-950/30 border border-indigo-500/15 rounded-xl p-4">
+              <div className="space-y-2 bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-500/15 rounded-xl p-4">
                 <p className="text-xs font-semibold text-indigo-300 flex items-center gap-1.5">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                   {t('voice.aiCorrected', lang)}
                 </p>
                 <div className="text-xs space-y-1.5">
-                  <p className="text-slate-500"><span className="font-medium text-slate-400">{t('voice.rawHeard', lang)}:</span> <span className="line-through opacity-60">{rawTranscript}</span></p>
-                  <p className="text-slate-300"><span className="font-medium text-indigo-400">{t('voice.corrected', lang)}:</span> {correctedTranscript}</p>
+                  <p className="text-gray-500 dark:text-slate-500"><span className="font-medium text-gray-500 dark:text-slate-400">{t('voice.rawHeard', lang)}:</span> <span className="line-through opacity-60">{rawTranscript}</span></p>
+                  <p className="text-gray-700 dark:text-slate-300"><span className="font-medium text-indigo-400">{t('voice.corrected', lang)}:</span> {correctedTranscript}</p>
                 </div>
               </div>
             )}
 
             {/* Problem Type */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-400">{t('voice.problemType', lang)}</label>
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">{t('voice.problemType', lang)}</label>
               <div className="flex flex-wrap gap-2">
                 {PROBLEM_TYPES.map((type) => (
                   <button
@@ -415,8 +415,8 @@ export default function VoiceReportPage() {
                     className={cn(
                       'px-3.5 py-1.5 rounded-full text-xs font-medium transition-all border',
                       problemType === type
-                        ? 'bg-purple-600/30 text-purple-300 border-purple-500/40'
-                        : 'bg-white/5 text-slate-500 border-white/10 hover:border-white/20 hover:text-slate-300'
+                        ? 'bg-purple-100 dark:bg-purple-600/30 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-500/40'
+                        : 'bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-slate-500 border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 hover:text-gray-700 dark:hover:text-slate-300'
                     )}
                   >
                     {type}
@@ -427,35 +427,35 @@ export default function VoiceReportPage() {
 
             {/* Problem summary */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-400">{t('voice.problemSummary', lang)}</label>
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">{t('voice.problemSummary', lang)}</label>
               <input
                 type="text"
                 value={problem}
                 onChange={(e) => setProblem(e.target.value)}
                 disabled={state === 'submitted'}
                 placeholder={t('voice.summaryPlaceholder', lang)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
+                className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
               />
             </div>
 
             {/* Description */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-400">{t('voice.detailedDesc', lang)}</label>
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">{t('voice.detailedDesc', lang)}</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 disabled={state === 'submitted'}
                 rows={5}
                 placeholder={t('voice.descFullPlaceholder', lang)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none disabled:opacity-50"
+                className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none disabled:opacity-50"
               />
             </div>
 
             {/* Raw fallback display */}
             {rawFallback && (
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-600">{t('voice.rawResponse', lang)}</label>
-                <pre className="bg-white/[0.02] border border-white/[0.04] rounded-lg p-3 text-xs text-slate-500 overflow-x-auto whitespace-pre-wrap">
+                <label className="block text-xs font-medium text-gray-400 dark:text-slate-500">{t('voice.rawResponse', lang)}</label>
+                <pre className="bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/[0.04] rounded-lg p-3 text-xs text-gray-500 dark:text-slate-500 overflow-x-auto whitespace-pre-wrap">
                   {rawFallback}
                 </pre>
               </div>
@@ -471,7 +471,7 @@ export default function VoiceReportPage() {
                     'flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all',
                     (problem.trim() || description.trim())
                       ? 'bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-500 hover:to-violet-500 text-white shadow-lg shadow-purple-900/30'
-                      : 'bg-white/5 text-slate-600 cursor-not-allowed'
+                      : 'bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-slate-600 cursor-not-allowed'
                   )}
                 >
                   <Send size={16} /> {t('voice.submitReport', lang)}
@@ -484,7 +484,7 @@ export default function VoiceReportPage() {
               )}
               <button
                 onClick={handleReset}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm text-slate-500 hover:text-slate-300 bg-white/5 hover:bg-white/10 transition-all"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm text-gray-500 dark:text-slate-500 hover:text-gray-700 dark:hover:text-slate-300 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-all"
               >
                 <RefreshCw size={14} /> {t('voice.newReport', lang)}
               </button>

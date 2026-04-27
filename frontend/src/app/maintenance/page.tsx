@@ -59,35 +59,35 @@ export default function MaintenancePage() {
 
   return (
     <div className="space-y-4">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1145] via-[#302b63] to-[#0f172a] p-4 sm:p-6">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-[#1a1145] dark:via-[#302b63] dark:to-[#0f172a] p-4 sm:p-6 border border-purple-100 dark:border-transparent">
         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="relative z-10">
-          <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2 text-white"><Wrench size={22} /> {t('maint.title', lang)}</h1>
-          <p className="text-purple-300/70 text-xs sm:text-sm mt-1">{t('maint.subtitle', lang)}</p>
+          <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2 text-gray-900 dark:text-white"><Wrench size={22} /> {t('maint.title', lang)}</h1>
+          <p className="text-purple-600/60 dark:text-purple-300/70 text-xs sm:text-sm mt-1">{t('maint.subtitle', lang)}</p>
         </div>
       </div>
 
       {loading ? (
-        <div className="text-center py-12 text-purple-400 animate-pulse">{t('maint.loading', lang)}</div>
+        <div className="text-center py-12 text-purple-600 dark:text-purple-400 animate-pulse">{t('maint.loading', lang)}</div>
       ) : reports.length === 0 ? (
-        <div className="bg-[#16162a] rounded-xl border border-white/5 p-8 text-center">
-          <ShieldCheck size={40} className="mx-auto text-green-400 mb-2" />
-          <p className="text-white font-semibold">{t('maint.allClear', lang)}</p>
-          <p className="text-sm text-slate-500">{t('maint.noTasks', lang)}</p>
+        <div className="bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/5 p-8 text-center shadow-sm dark:shadow-none">
+          <ShieldCheck size={40} className="mx-auto text-green-500 dark:text-green-400 mb-2" />
+          <p className="text-gray-900 dark:text-white font-semibold">{t('maint.allClear', lang)}</p>
+          <p className="text-sm text-gray-500 dark:text-slate-500">{t('maint.noTasks', lang)}</p>
         </div>
       ) : (
         <div className="grid gap-4">
           {reports.map((r: any) => (
-            <div key={r.id} className="bg-[#16162a] rounded-xl border border-white/5 p-3 sm:p-4 hover:border-purple-500/20 transition-colors">
+            <div key={r.id} className="bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/5 p-3 sm:p-4 hover:border-purple-300 dark:hover:border-purple-500/20 transition-colors shadow-sm dark:shadow-none">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
-                    <span className="font-semibold text-white">{r.asset_name}</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{r.asset_name}</span>
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${getRiskColor(r.risk_level)}`}>{r.risk_level}</span>
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusColor(r.status)}`}>{r.status}</span>
                   </div>
-                  <p className="text-sm text-slate-400">{r.company_name} · {r.location_name} · {r.issue_type}</p>
-                  <p className="text-xs text-slate-500 mt-1">Created {formatDate(r.created_at)} · Assigned to {r.assigned_team || 'Unassigned'}</p>
+                  <p className="text-sm text-gray-500 dark:text-slate-400">{r.company_name} · {r.location_name} · {r.issue_type}</p>
+                  <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">Created {formatDate(r.created_at)} · Assigned to {r.assigned_team || 'Unassigned'}</p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 sm:ml-4">
@@ -96,9 +96,9 @@ export default function MaintenancePage() {
                       value={r.status}
                       onChange={e => handleStatusChange(r.id, e.target.value)}
                       disabled={actionLoading === r.id}
-                      className="text-xs bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="text-xs bg-gray-50 border border-gray-200 dark:bg-white/5 dark:border-white/10 rounded-lg px-2 py-1.5 text-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                     >
-                      {STATUSES.filter(s => s !== 'Verified').map(s => <option key={s} value={s} className="bg-slate-900">{s}</option>)}
+                      {STATUSES.filter(s => s !== 'Verified').map(s => <option key={s} value={s} className="bg-white dark:bg-slate-900">{s}</option>)}
                     </select>
                   )}
 
@@ -113,11 +113,11 @@ export default function MaintenancePage() {
                 </div>
               </div>
 
-              <div className="mt-3 bg-white/[0.03] rounded-lg p-2.5 sm:p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 text-xs text-slate-400 border border-white/5">
-                <div><span className="font-semibold text-slate-300">{t('maint.ppe', lang)}:</span> {(r.required_ppe || []).join(', ')}</div>
-                <div><span className="font-semibold text-slate-300">{t('maint.minCrew', lang)}:</span> {r.minimum_crew}</div>
-                <div><span className="font-semibold text-slate-300">{t('maint.supervisor', lang)}:</span> {r.supervisor_approval_required ? t('reports.required', lang) : t('maint.notRequired', lang)}</div>
-                <div><span className="font-semibold text-slate-300">{t('maint.hazardRadius', lang)}:</span> {r.hazard_radius_meters}m</div>
+              <div className="mt-3 bg-gray-50 dark:bg-white/[0.03] rounded-lg p-2.5 sm:p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-500 dark:text-slate-400 border border-gray-200 dark:border-white/5">
+                <div><span className="font-semibold text-gray-700 dark:text-slate-300">{t('maint.ppe', lang)}:</span> {(r.required_ppe || []).join(', ')}</div>
+                <div><span className="font-semibold text-gray-700 dark:text-slate-300">{t('maint.minCrew', lang)}:</span> {r.minimum_crew}</div>
+                <div><span className="font-semibold text-gray-700 dark:text-slate-300">{t('maint.supervisor', lang)}:</span> {r.supervisor_approval_required ? t('reports.required', lang) : t('maint.notRequired', lang)}</div>
+                <div><span className="font-semibold text-gray-700 dark:text-slate-300">{t('maint.hazardRadius', lang)}:</span> {r.hazard_radius_meters}m</div>
               </div>
             </div>
           ))}
@@ -125,34 +125,34 @@ export default function MaintenancePage() {
       )}
 
       {safetyModal && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => setSafetyModal(null)}>
-          <div className="bg-[#1a1a2e] rounded-2xl max-w-lg w-full p-6 space-y-4 border border-white/10" onClick={e => e.stopPropagation()}>
-            <h2 className="text-lg font-bold text-white">{t('maint.safetyCheckIn', lang)}</h2>
-            <p className="text-sm text-slate-400">{safetyModal.asset_name} — {safetyModal.location_name}</p>
+        <div className="fixed inset-0 bg-black/30 dark:bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => setSafetyModal(null)}>
+          <div className="bg-white dark:bg-[#1a1a2e] rounded-2xl max-w-lg w-full p-6 space-y-4 border border-gray-200 dark:border-white/10 shadow-xl" onClick={e => e.stopPropagation()}>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('maint.safetyCheckIn', lang)}</h2>
+            <p className="text-sm text-gray-500 dark:text-slate-400">{safetyModal.asset_name} — {safetyModal.location_name}</p>
 
-            <div className="bg-amber-950/20 rounded-lg p-4 space-y-2 border border-amber-500/10">
-              <h3 className="text-sm font-semibold text-amber-300">{t('maint.requiredPPE', lang)}</h3>
+            <div className="bg-amber-50 dark:bg-amber-950/20 rounded-lg p-4 space-y-2 border border-amber-200 dark:border-amber-500/10">
+              <h3 className="text-sm font-semibold text-amber-700 dark:text-amber-300">{t('maint.requiredPPE', lang)}</h3>
               <ul className="space-y-1">
                 {(safetyModal.required_ppe || []).map((p: string, i: number) => (
-                  <li key={i} className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle size={14} className="text-green-400" /> {p}</li>
+                  <li key={i} className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-300"><CheckCircle size={14} className="text-green-500 dark:text-green-400" /> {p}</li>
                 ))}
               </ul>
             </div>
 
-            <div className="bg-blue-950/20 rounded-lg p-4 space-y-2 border border-blue-500/10">
-              <h3 className="text-sm font-semibold text-blue-300">{t('maint.safetyInstr', lang)}</h3>
+            <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-4 space-y-2 border border-blue-200 dark:border-blue-500/10">
+              <h3 className="text-sm font-semibold text-blue-700 dark:text-blue-300">{t('maint.safetyInstr', lang)}</h3>
               <ul className="space-y-1">
                 {(safetyModal.safety_instructions || []).map((s: string, i: number) => (
-                  <li key={i} className="flex items-center gap-2 text-sm text-slate-300"><ChevronRight size={14} className="text-blue-400" /> {s}</li>
+                  <li key={i} className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-300"><ChevronRight size={14} className="text-blue-500 dark:text-blue-400" /> {s}</li>
                 ))}
               </ul>
             </div>
 
-            <div className="text-sm space-y-1 text-slate-300">
-              <p><span className="font-semibold text-slate-400">Worker Safety Level:</span> {safetyModal.worker_safety_level}</p>
-              <p><span className="font-semibold text-slate-400">Minimum Crew:</span> {safetyModal.minimum_crew}</p>
-              <p><span className="font-semibold text-slate-400">{t('maint.supervisorApproval', lang)}:</span> {safetyModal.supervisor_approval_required ? t('maint.requiredBefore', lang) : t('maint.notRequired', lang)}</p>
-              <p><span className="font-semibold text-slate-400">Status:</span> {safetyModal.safety_checklist_completed ? <span className="text-green-400 font-medium">Completed</span> : <span className="text-amber-400 font-medium">Pending</span>}</p>
+            <div className="text-sm space-y-1 text-gray-700 dark:text-slate-300">
+              <p><span className="font-semibold text-gray-500 dark:text-slate-400">Worker Safety Level:</span> {safetyModal.worker_safety_level}</p>
+              <p><span className="font-semibold text-gray-500 dark:text-slate-400">Minimum Crew:</span> {safetyModal.minimum_crew}</p>
+              <p><span className="font-semibold text-gray-500 dark:text-slate-400">{t('maint.supervisorApproval', lang)}:</span> {safetyModal.supervisor_approval_required ? t('maint.requiredBefore', lang) : t('maint.notRequired', lang)}</p>
+              <p><span className="font-semibold text-gray-500 dark:text-slate-400">Status:</span> {safetyModal.safety_checklist_completed ? <span className="text-green-500 dark:text-green-400 font-medium">Completed</span> : <span className="text-amber-500 dark:text-amber-400 font-medium">Pending</span>}</p>
             </div>
 
             {!safetyModal.safety_checklist_completed && (

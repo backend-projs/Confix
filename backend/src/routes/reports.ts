@@ -8,18 +8,33 @@ import {
   createAuditEvent,
   appendAuditEvent,
 } from '../utils';
+import { AuthRequest, authMiddleware, optionalAuth, requireCompanyAccess } from '../middleware/auth';
 
 export const reportsRouter = Router();
 
+// Helper to enforce tenant isolation on queries (must be sync — Supabase query builders are thenable)
+function enforceTenantScope(req: AuthRequest, query: any) {
+  if (req.user!.role === 'superadmin') return query;
+  if (req.user!.role === 'admin' || req.user!.role === 'worker') {
+    if (req.user!.company_id) {
+      return query.eq('company_id', req.user!.company_id);
+    }
+  }
+  return query;
+}
+
 // GET /api/reports
-reportsRouter.get('/', async (req: Request, res: Response) => {
+reportsRouter.get('/', optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
     let query = supabase.from('reports').select('*');
 
-    const { tenantId, companyName, status, riskLevel, assetType, issueType, visibilityLevel, search } = req.query;
+    // If authenticated, enforce tenant scope
+    if (req.user) {
+      query = enforceTenantScope(req, query);
+    }
 
-    if (tenantId) query = query.eq('tenant_id', tenantId as string);
-    if (companyName) query = query.eq('company_name', companyName as string);
+    const { status, riskLevel, assetType, issueType, visibilityLevel, search } = req.query;
+
     if (status) query = query.eq('status', status as string);
     if (riskLevel) query = query.eq('risk_level', riskLevel as string);
     if (assetType) query = query.eq('asset_type', assetType as string);
@@ -28,6 +43,11 @@ reportsRouter.get('/', async (req: Request, res: Response) => {
     if (search) {
       const s = search as string;
       query = query.or(`asset_name.ilike.%${s}%,location_name.ilike.%${s}%,description.ilike.%${s}%,issue_type.ilike.%${s}%`);
+    }
+
+    // Workers only see their own reports
+    if (req.user?.role === 'worker') {
+      query = query.eq('worker_id', req.user.id);
     }
 
     query = query.order('created_at', { ascending: false });
@@ -41,13 +61,14 @@ reportsRouter.get('/', async (req: Request, res: Response) => {
 });
 
 // GET /api/reports/:id
-reportsRouter.get('/:id', async (req: Request, res: Response) => {
+reportsRouter.get('/:id', authMiddleware, requireCompanyAccess, async (req: AuthRequest, res: Response) => {
   try {
-    const { data, error } = await supabase
-      .from('reports')
-      .select('*')
-      .eq('id', req.params.id)
-      .single();
+    let query = supabase.from('reports').select('*').eq('id', req.params.id);
+    query = enforceTenantScope(req, query);
+    if (req.user!.role === 'worker') {
+      query = query.eq('worker_id', req.user!.id);
+    }
+    const { data, error } = await query.single();
 
     if (error) return res.status(404).json({ error: 'Report not found' });
     return res.json(data);
@@ -57,38 +78,77 @@ reportsRouter.get('/:id', async (req: Request, res: Response) => {
 });
 
 // POST /api/reports
-reportsRouter.post('/', async (req: Request, res: Response) => {
+reportsRouter.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const {
-      tenantId, companyName, assetName, assetType,
+      assetId, assetName, assetType,
       locationName, latitude, longitude,
       issueType, description, imageName,
-      impact, likelihood, createdBy, assignedTeam,
-      visibilityLevel,
+      impact, likelihood, visibilityLevel,
     } = req.body;
 
-    if (!tenantId || !companyName || !assetName || !assetType || !locationName || !issueType || !description || !impact || !likelihood || !createdBy) {
+    if (!assetName || !assetType || !locationName || !issueType || !description || !impact || !likelihood) {
       return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Resolve asset and company context
+    let companyId = req.user!.company_id;
+    let resolvedAssetName = assetName;
+    let resolvedAssetType = assetType;
+    let resolvedLocationName = locationName;
+    let resolvedLat = latitude ? parseFloat(latitude) : null;
+    let resolvedLng = longitude ? parseFloat(longitude) : null;
+
+    if (assetId) {
+      const { data: asset } = await supabase.from('assets').select('*').eq('id', assetId).single();
+      if (asset) {
+        resolvedAssetName = asset.name;
+        resolvedAssetType = asset.type;
+        resolvedLocationName = asset.location_name || locationName;
+        resolvedLat = asset.latitude || resolvedLat;
+        resolvedLng = asset.longitude || resolvedLng;
+        companyId = asset.company_id;
+      }
+    }
+
+    // Workers must have a company
+    if (req.user!.role === 'worker' && !companyId) {
+      return res.status(400).json({ error: 'Worker is not assigned to a company' });
+    }
+    // Admin/worker can only report for their own company
+    if ((req.user!.role === 'admin' || req.user!.role === 'worker') && req.user!.company_id && companyId !== req.user!.company_id) {
+      return res.status(403).json({ error: 'Cannot create report for another company' });
     }
 
     const riskMatrixScore = calculateRiskMatrixScore(impact, likelihood);
     const riskLevel = getRiskLevel(riskMatrixScore);
-    const safety = deriveSafetyFields(assetType, issueType, riskLevel);
-    const recommendedAction = deriveRecommendedAction(riskLevel, issueType, assetType);
+    const safety = deriveSafetyFields(resolvedAssetType, issueType, riskLevel);
+    const recommendedAction = deriveRecommendedAction(riskLevel, issueType, resolvedAssetType);
+
+    const createdBy = req.user!.full_name;
 
     const auditTrail = [
       createAuditEvent('Report created', createdBy),
       createAuditEvent(`Risk assessed: Impact ${impact} × Likelihood ${likelihood} = ${riskMatrixScore} (${riskLevel})`, createdBy),
     ];
 
+    // Fetch company name
+    let companyName = '';
+    if (companyId) {
+      const { data: comp } = await supabase.from('companies').select('name').eq('id', companyId).single();
+      if (comp) companyName = comp.name;
+    }
+
     const report = {
-      tenant_id: tenantId,
+      tenant_id: companyId || 'default',
+      company_id: companyId,
       company_name: companyName,
-      asset_name: assetName,
-      asset_type: assetType,
-      location_name: locationName,
-      latitude: parseFloat(latitude),
-      longitude: parseFloat(longitude),
+      asset_id: assetId || null,
+      asset_name: resolvedAssetName,
+      asset_type: resolvedAssetType,
+      location_name: resolvedLocationName,
+      latitude: resolvedLat,
+      longitude: resolvedLng,
       issue_type: issueType,
       description,
       image_name: imageName || null,
@@ -98,7 +158,8 @@ reportsRouter.post('/', async (req: Request, res: Response) => {
       risk_matrix_score: riskMatrixScore,
       risk_level: riskLevel,
       created_by: createdBy,
-      assigned_team: assignedTeam || null,
+      worker_id: req.user!.id,
+      assigned_team: req.user!.team || null,
       supervisor_reviewed: false,
       recommended_action: recommendedAction,
       ai_suggestion: null,
@@ -123,16 +184,14 @@ reportsRouter.post('/', async (req: Request, res: Response) => {
 });
 
 // PATCH /api/reports/:id/status
-reportsRouter.patch('/:id/status', async (req: Request, res: Response) => {
+reportsRouter.patch('/:id/status', authMiddleware, requireCompanyAccess, async (req: AuthRequest, res: Response) => {
   try {
     const { status } = req.body;
     if (!status) return res.status(400).json({ error: 'status is required' });
 
-    const { data: existing, error: fetchErr } = await supabase
-      .from('reports')
-      .select('*')
-      .eq('id', req.params.id)
-      .single();
+    let query = supabase.from('reports').select('*').eq('id', req.params.id);
+    query = enforceTenantScope(req, query);
+    const { data: existing, error: fetchErr } = await query.single();
 
     if (fetchErr || !existing) return res.status(404).json({ error: 'Report not found' });
 
@@ -140,7 +199,7 @@ reportsRouter.patch('/:id/status', async (req: Request, res: Response) => {
     const updatedTrail = appendAuditEvent(
       existing.audit_trail || [],
       `Status changed from ${oldStatus} to ${status}`,
-      'System'
+      req.user!.full_name
     );
 
     const updates: any = {
@@ -167,22 +226,20 @@ reportsRouter.patch('/:id/status', async (req: Request, res: Response) => {
 });
 
 // PATCH /api/reports/:id/safety-checklist
-reportsRouter.patch('/:id/safety-checklist', async (req: Request, res: Response) => {
+reportsRouter.patch('/:id/safety-checklist', authMiddleware, requireCompanyAccess, async (req: AuthRequest, res: Response) => {
   try {
     const { completed } = req.body;
 
-    const { data: existing, error: fetchErr } = await supabase
-      .from('reports')
-      .select('*')
-      .eq('id', req.params.id)
-      .single();
+    let query = supabase.from('reports').select('*').eq('id', req.params.id);
+    query = enforceTenantScope(req, query);
+    const { data: existing, error: fetchErr } = await query.single();
 
     if (fetchErr || !existing) return res.status(404).json({ error: 'Report not found' });
 
     const updatedTrail = appendAuditEvent(
       existing.audit_trail || [],
       completed ? 'Safety checklist completed' : 'Safety checklist reset',
-      'System'
+      req.user!.full_name
     );
 
     const updates: any = {
@@ -195,7 +252,7 @@ reportsRouter.patch('/:id/safety-checklist', async (req: Request, res: Response)
       const trail2 = appendAuditEvent(
         updatedTrail,
         `Status changed from ${existing.status} to In Progress`,
-        'System'
+        req.user!.full_name
       );
       updates.audit_trail = trail2;
     }
@@ -215,20 +272,18 @@ reportsRouter.patch('/:id/safety-checklist', async (req: Request, res: Response)
 });
 
 // POST /api/reports/:id/emergency-alert
-reportsRouter.post('/:id/emergency-alert', async (req: Request, res: Response) => {
+reportsRouter.post('/:id/emergency-alert', authMiddleware, requireCompanyAccess, async (req: AuthRequest, res: Response) => {
   try {
-    const { data: existing, error: fetchErr } = await supabase
-      .from('reports')
-      .select('*')
-      .eq('id', req.params.id)
-      .single();
+    let query = supabase.from('reports').select('*').eq('id', req.params.id);
+    query = enforceTenantScope(req, query);
+    const { data: existing, error: fetchErr } = await query.single();
 
     if (fetchErr || !existing) return res.status(404).json({ error: 'Report not found' });
 
     const updatedTrail = appendAuditEvent(
       existing.audit_trail || [],
       'Emergency alert triggered — supervisor notified with task and location details',
-      'System'
+      req.user!.full_name
     );
 
     await supabase
