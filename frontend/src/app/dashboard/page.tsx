@@ -13,7 +13,11 @@ import {
   AlertTriangle, FileText, ShieldAlert, HardHat, Radiation, ClipboardCheck, UserCheck, Activity,
   LayoutGrid, ArrowUpRight, Map as MapIcon,
 } from 'lucide-react';
-import MapView from '@/components/MapView';
+import dynamic from 'next/dynamic';
+
+const MapView = dynamic(() => import('@/components/MapView'), {
+  ssr: false,
+});
 
 const RISK_SHADES = ['#c4b5fd', '#a78bfa', '#8b5cf6', '#7c3aed'];
 const TOOLTIP_STYLE_DARK = { background: '#1a1a2e', border: 'none', borderRadius: 10, color: '#c4b5fd', fontSize: 12, boxShadow: '0 8px 32px rgba(0,0,0,.4)' };
