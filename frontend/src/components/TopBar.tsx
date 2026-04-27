@@ -8,7 +8,7 @@ import { COMPANIES, ROLES, cn } from '@/lib/utils';
 import { t, LANG_OPTIONS } from '@/lib/i18n';
 import {
   Gauge, PenLine, ClipboardList, HardHat, Globe2, BookLock,
-  Building, UserCog, Mic, ScanEye, Menu, X, Sun, Moon,
+  Building, UserCog, Menu, X, Sun, Moon,
   LogIn, LogOut, Shield, Users, HardHat as WorkerIcon,
 } from 'lucide-react';
 
@@ -17,8 +17,6 @@ const baseNavItems = [
   { href: '/reports', tKey: 'nav.reports', icon: ClipboardList },
   { href: '/maintenance', tKey: 'nav.maintenance', icon: HardHat },
   { href: '/map', tKey: 'nav.map', icon: Globe2 },
-  { href: '/voice-report', tKey: 'nav.voiceReport', icon: Mic },
-  { href: '/analyze-image', tKey: 'nav.imageAnalysis', icon: ScanEye },
   { href: '/governance', tKey: 'nav.governance', icon: BookLock },
 ];
 
@@ -43,7 +41,7 @@ export default function TopBar() {
   if (user?.role === 'worker') {
     navItems.splice(1, 0, { href: '/worker-report', tKey: 'nav.newReport', icon: PenLine });
   } else {
-    navItems.splice(1, 0, { href: '/report', tKey: 'nav.newReport', icon: PenLine });
+    navItems.splice(1, 0, { href: '/report', tKey: 'nav.manualReport', icon: PenLine });
   }
   if (user?.role === 'superadmin') {
     navItems.push({ href: '/superadmin', tKey: 'nav.superadmin', icon: Shield });

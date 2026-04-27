@@ -10,6 +10,7 @@ const translations: Record<string, Record<Lang, string>> = {
   // ── Nav ──
   'nav.dashboard': { en: 'Dashboard', ru: 'Панель', az: 'İdarə paneli' },
   'nav.newReport': { en: 'New Report', ru: 'Новый отчёт', az: 'Yeni hesabat' },
+  'nav.manualReport': { en: 'Manual Report', ru: 'Отчёт вручную', az: 'Əl ilə hesabat' },
   'nav.reports': { en: 'Reports', ru: 'Отчёты', az: 'Hesabatlar' },
   'nav.maintenance': { en: 'Maintenance', ru: 'Обслуживание', az: 'Texniki xidmət' },
   'nav.map': { en: 'Map', ru: 'Карта', az: 'Xəritə' },
