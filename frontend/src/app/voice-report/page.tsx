@@ -1,8 +1,14 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { Mic, MicOff, AlertCircle, RefreshCw, Send, Loader2, CheckCircle2 } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { Mic, MicOff, AlertCircle, RefreshCw, Send, Loader2, CheckCircle2, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+const LocationPicker = dynamic(() => import('@/components/LocationPicker'), { 
+  ssr: false,
+  loading: () => <div className="h-48 w-full bg-gray-100 dark:bg-white/5 animate-pulse rounded-xl flex items-center justify-center text-gray-400">Loading Map...</div>
+});
 import { useAppContext } from '@/context/AppContext';
 import { t, LANG_OPTIONS } from '@/lib/i18n';
 import { createReport } from '@/lib/api';
@@ -27,13 +33,17 @@ export default function VoiceReportPage() {
   const [supported, setSupported] = useState(true);
   const [manualMode, setManualMode] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
-  const { lang } = useAppContext();
+  const { lang, token } = useAppContext();
   const speechCode = LANG_OPTIONS.find(l => l.code === lang)?.speechCode || 'en-US';
 
   // Form fields
   const [problemType, setProblemType] = useState('Other');
   const [problem, setProblem] = useState('');
   const [description, setDescription] = useState('');
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
+  const [locationName, setLocationName] = useState('Voice Report');
+  const [showLocationModal, setShowLocationModal] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -190,21 +200,27 @@ export default function VoiceReportPage() {
   };
 
   const handleSubmit = async () => {
+    if (!lat || !lng) {
+      setShowLocationModal(true);
+      return;
+    }
+
     setState('processing');
     try {
       await createReport({
         assetName: 'Voice Report Asset',
         assetType: 'Other',
-        locationName: 'Unknown',
+        locationName: locationName || 'Voice Report Location',
         issueType: problemType || 'Other',
         description: (problem ? problem + '\n\n' : '') + description,
         impact: 3,
         likelihood: 3,
         visibilityLevel: 'Internal',
-        latitude: 40.4093,
-        longitude: 49.8671,
+        latitude: lat,
+        longitude: lng,
       });
       setState('submitted');
+      setShowLocationModal(false);
     } catch (err: any) {
       console.error('Failed to create voice report:', err);
       setError(err.message || 'Failed to submit report');
@@ -508,6 +524,77 @@ export default function VoiceReportPage() {
               >
                 <RefreshCw size={14} /> {t('voice.newReport', lang)}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Location Modal */}
+      {showLocationModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#16162a] w-full max-w-lg rounded-2xl border border-gray-200 dark:border-white/10 shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-5 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                  <MapPin size={20} className="text-purple-500" />
+                  {t('voice.whereIncident', lang) || 'Where did this happen?'}
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{t('voice.pinLocation', lang) || 'Please pin the exact location on the map.'}</p>
+              </div>
+              <button 
+                onClick={() => setShowLocationModal(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors"
+              >
+                <RefreshCw size={20} className="rotate-45" />
+              </button>
+            </div>
+            
+            <div className="h-64 relative bg-gray-100 dark:bg-white/5">
+              <LocationPicker 
+                lat={lat ?? 40.4093} 
+                lng={lng ?? 49.8671} 
+                onSelect={(lt, ln) => { setLat(lt); setLng(ln); }} 
+              />
+              {!lat && (
+                <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                  <div className="bg-white/90 dark:bg-[#16162a]/90 px-4 py-2 rounded-full shadow-lg border border-purple-500/20 text-xs font-medium text-purple-600 dark:text-purple-400 backdrop-blur-md">
+                    Click on the map to pin location
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 bg-gray-50 dark:bg-white/[0.02] space-y-3">
+              <div className="space-y-1">
+                <label className="text-[11px] font-medium text-gray-500 dark:text-slate-500 uppercase tracking-wider">{t('voice.locationName', lang) || 'Location Name / Area'}</label>
+                <input 
+                  type="text" 
+                  value={locationName}
+                  onChange={(e) => setLocationName(e.target.value)}
+                  placeholder="e.g. Near Building A, Sector 4..."
+                  className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setShowLocationModal(false)}
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 text-gray-700 dark:text-slate-300 text-sm font-medium hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  disabled={!lat || !lng}
+                  className={cn(
+                    "flex-1 px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-lg shadow-purple-500/20",
+                    lat && lng 
+                      ? "bg-purple-600 hover:bg-purple-500 text-white" 
+                      : "bg-gray-200 dark:bg-white/5 text-gray-400 cursor-not-allowed"
+                  )}
+                >
+                  Confirm & Submit
+                </button>
+              </div>
             </div>
           </div>
         </div>
