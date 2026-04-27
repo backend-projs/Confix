@@ -106,6 +106,7 @@ export default function TopBar() {
                 {/* Other nav items */}
                 {navItems.map((item: any) => {
                   const active = pathname === item.href;
+                  const isWorkerMaintenance = selectedRole === 'Field Engineer' && item.href === '/maintenance';
                   return (
                     <Link
                       key={item.href}
@@ -114,11 +115,16 @@ export default function TopBar() {
                         'flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap',
                         active
                           ? 'bg-purple-50 text-purple-700 dark:bg-white/15 dark:text-white shadow-inner shadow-purple-500/10'
-                          : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
+                          : isWorkerMaintenance
+                            ? 'text-purple-600 dark:text-purple-400 bg-purple-500/5 hover:bg-purple-500/10 border border-purple-500/20 shadow-sm shadow-purple-500/5'
+                            : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
                       )}
                     >
                       <item.icon size={16} />
                       <span className="hidden lg:inline">{t(item.tKey, lang)}</span>
+                      {isWorkerMaintenance && !active && (
+                        <span className="flex h-2 w-2 rounded-full bg-purple-500 animate-pulse" />
+                      )}
                     </Link>
                   );
                 })}

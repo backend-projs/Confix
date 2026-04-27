@@ -35,6 +35,7 @@ interface Thread {
   reporter?: { id: string; full_name: string; worker_type: string; position: string } | null;
   latest_message?: { id: string; body: string; sender_role: string; created_at: string; is_system: boolean } | null;
   message_count?: number;
+  image_name?: string | null;
 }
 
 function relativeTime(date: string | null | undefined) {
@@ -284,7 +285,9 @@ function ThreadChatView({ thread, onBack, onUpdated }: { thread: Thread; onBack:
   const [showResolveBox, setShowResolveBox] = useState(false);
   const [resolveNotes, setResolveNotes] = useState('');
   const [resolving, setResolving] = useState(false);
+  const [chatImage, setChatImage] = useState<{ file: File; preview: string } | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const chatImageInputRef = useRef<HTMLInputElement>(null);
 
   const resolved = isResolved(thread);
 
@@ -327,9 +330,16 @@ function ThreadChatView({ thread, onBack, onUpdated }: { thread: Thread; onBack:
     if (!draft.trim() || !token) return;
     setSending(true);
     try {
-      const msg = await postThreadMessage(token, thread.id, draft.trim());
+      // Simulate image upload by using Unsplash for the demo if an image was picked
+      let attachment_url = undefined;
+      if (chatImage) {
+        attachment_url = `https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=400&name=${encodeURIComponent(chatImage.file.name)}`;
+      }
+
+      const msg = await postThreadMessage(token, thread.id, draft.trim(), attachment_url);
       setMessages(prev => [...prev, msg]);
       setDraft('');
+      setChatImage(null);
       onUpdated();
     } catch (err: any) {
       alert(err.message);
@@ -479,6 +489,29 @@ function ThreadChatView({ thread, onBack, onUpdated }: { thread: Thread; onBack:
             <div className="mt-1 text-sm text-gray-800 dark:text-slate-200 bg-gray-50 dark:bg-white/[0.03] rounded-xl rounded-tl-sm px-3 py-2 border border-gray-200 dark:border-white/5">
               <p className="font-medium text-gray-900 dark:text-white mb-1">{thread.issue_type} reported at {thread.location_name}</p>
               <p>{thread.description || 'No description provided.'}</p>
+              
+              {/* Photo Evidence Section */}
+              {thread.image_name && (
+                <div className="mt-3 space-y-2 pt-2 border-t border-gray-200 dark:border-white/5">
+                  <p className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-tight flex items-center gap-1">
+                    <ImageIcon size={10} /> Photo Evidence
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {thread.image_name.split(',').map((name, i) => (
+                      <div key={i} className="group relative w-24 aspect-video rounded-lg overflow-hidden border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm">
+                        <img 
+                          src={`https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=300&name=${encodeURIComponent(name.trim())}`}
+                          alt="Evidence"
+                          className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button className="text-[8px] font-bold text-white uppercase tracking-widest bg-white/20 backdrop-blur-md px-2 py-1 rounded border border-white/30">Zoom</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -503,12 +536,38 @@ function ThreadChatView({ thread, onBack, onUpdated }: { thread: Thread; onBack:
       <form onSubmit={handleSend} className="border-t border-gray-200 dark:border-white/5 p-3 flex items-end gap-2">
         <button
           type="button"
-          disabled
-          className="p-2 rounded-lg text-gray-400 dark:text-slate-600 hover:bg-gray-100 dark:hover:bg-white/5"
-          title="Image attachment (coming soon)"
+          onClick={() => chatImageInputRef.current?.click()}
+          className={cn(
+            "p-2 rounded-lg transition-colors",
+            chatImage ? "text-purple-600 bg-purple-50 dark:bg-purple-500/20" : "text-gray-400 dark:text-slate-600 hover:bg-gray-100 dark:hover:bg-white/5"
+          )}
+          title="Attach photo"
         >
           <ImageIcon size={16} />
         </button>
+        <input 
+          ref={chatImageInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) setChatImage({ file, preview: URL.createObjectURL(file) });
+          }}
+        />
+        {chatImage && (
+          <div className="absolute bottom-full mb-2 left-4 group">
+            <div className="relative w-20 h-20 rounded-lg overflow-hidden border-2 border-purple-500 shadow-lg">
+              <img src={chatImage.preview} alt="upload preview" className="w-full h-full object-cover" />
+              <button 
+                onClick={() => setChatImage(null)}
+                className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <X size={12} />
+              </button>
+            </div>
+          </div>
+        )}
         <textarea
           value={draft}
           onChange={e => setDraft(e.target.value)}
@@ -577,6 +636,11 @@ function ChatMessage({ message, currentUserId }: { message: any; currentUserId?:
         )}>
           {message.body}
         </div>
+        {message.attachment_url && (
+          <div className={cn("mt-2 rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 max-w-[200px] shadow-sm", isMine ? "ml-auto" : "")}>
+            <img src={message.attachment_url} alt="attachment" className="w-full h-auto" />
+          </div>
+        )}
       </div>
     </div>
   );

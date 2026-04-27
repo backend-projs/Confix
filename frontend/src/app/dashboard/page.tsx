@@ -228,13 +228,43 @@ export default function DashboardPage() {
             ))}
           </div>
         </div>
-      </div>
+      </div>      {/* Row 3: Infrastructure Map & Recent Photos */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4">
+        {/* Map */}
+        <div className="lg:col-span-8 bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 shadow-sm dark:shadow-none">
+          <h3 className="text-xs font-medium text-gray-500 dark:text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5"><MapIcon size={12} /> {t('dashboard.infrastructureMap', lang) || 'Infrastructure Map'}</h3>
+          <div className="h-[320px] rounded-lg overflow-hidden border border-gray-200 dark:border-white/[0.04]">
+            <MapView reports={filtered} onSelect={() => {}} />
+          </div>
+        </div>
 
-      {/* Row 3: Infrastructure Map */}
-      <div className="bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 shadow-sm dark:shadow-none">
-        <h3 className="text-xs font-medium text-gray-500 dark:text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5"><MapIcon size={12} /> {t('dashboard.infrastructureMap', lang) || 'Infrastructure Map'}</h3>
-        <div className="h-[320px] rounded-lg overflow-hidden border border-gray-200 dark:border-white/[0.04]">
-          <MapView reports={filtered} onSelect={() => {}} />
+        {/* Recent Photos Feed */}
+        <div className="lg:col-span-4 bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 shadow-sm dark:shadow-none flex flex-col h-[384px]">
+          <h3 className="text-xs font-medium text-gray-500 dark:text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5"><Camera size={12} /> {t('dashboard.recentPhotos', lang) || 'Recent Field Photos'}</h3>
+          <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
+            {filtered.filter(r => r.image_name).slice(0, 10).map((r) => {
+              const photo = r.image_name.split(',')[0].trim();
+              return (
+                <div key={r.id} className="relative aspect-video rounded-lg overflow-hidden border border-gray-200 dark:border-white/10 group">
+                  <img 
+                    src={`https://images.unsplash.com/photo-1590674899484-d5640e854abe?auto=format&fit=crop&q=80&w=400&name=${encodeURIComponent(photo)}`}
+                    alt={r.asset_name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2">
+                    <p className="text-[10px] font-medium text-white truncate">{r.asset_name}</p>
+                    <p className="text-[9px] text-white/70 truncate">{r.issue_type} · {r.location_name}</p>
+                  </div>
+                </div>
+              );
+            })}
+            {filtered.filter(r => r.image_name).length === 0 && (
+              <div className="flex-1 flex flex-col items-center justify-center text-center p-6 space-y-2 opacity-40">
+                <Camera size={24} className="text-gray-400" />
+                <p className="text-xs text-gray-500">No field photos yet</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

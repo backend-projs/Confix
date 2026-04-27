@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { Mic, MicOff, AlertCircle, RefreshCw, Send, Loader2, CheckCircle2, MapPin } from 'lucide-react';
+import { Mic, MicOff, AlertCircle, RefreshCw, Send, Loader2, CheckCircle2, MapPin, Camera, ImagePlus, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const LocationPicker = dynamic(() => import('@/components/LocationPicker'), { 
@@ -11,7 +11,7 @@ const LocationPicker = dynamic(() => import('@/components/LocationPicker'), {
 });
 import { useAppContext } from '@/context/AppContext';
 import { t, LANG_OPTIONS } from '@/lib/i18n';
-import { createReport } from '@/lib/api';
+import { createReport, analyzeImage } from '@/lib/api';
 
 const PROBLEM_TYPES = ['Bug', 'UI Issue', 'Performance', 'Feature Request', 'Infrastructure', 'Safety Hazard', 'Other'];
 
@@ -44,10 +44,13 @@ export default function VoiceReportPage() {
   const [lng, setLng] = useState<number | null>(null);
   const [locationName, setLocationName] = useState('Voice Report');
   const [showLocationModal, setShowLocationModal] = useState(false);
+  const [images, setImages] = useState<{ file: File; preview: string; name: string }[]>([]);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   // Check browser support for MediaRecorder
   useEffect(() => {
@@ -56,6 +59,57 @@ export default function VoiceReportPage() {
       setManualMode(true);
     }
   }, []);
+
+  const handleCameraCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const preview = URL.createObjectURL(file);
+    setImages(prev => [...prev, { file, preview, name: file.name }]);
+    
+    // Auto-analyze if it's the first image
+    if (images.length === 0) {
+      try {
+        const result = await analyzeImage(file);
+        if (result) {
+          if (result.asset?.category && !problemType) setProblemType(result.asset.category);
+          if (result.diagnostics?.technical_description && !description) {
+            setDescription(prev => prev ? prev + '\n\n' + result.diagnostics.technical_description : result.diagnostics.technical_description);
+          }
+        }
+      } catch (err) {
+        console.error('Image analysis failed:', err);
+      }
+    }
+  };
+
+  const handleGalleryPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    
+    files.forEach(file => {
+      const preview = URL.createObjectURL(file);
+      setImages(prev => [...prev, { file, preview, name: file.name }]);
+    });
+
+    // Auto-analyze first selected image
+    if (images.length === 0 && files[0]) {
+      try {
+        const result = await analyzeImage(files[0]);
+        if (result) {
+          if (result.asset?.category && !problemType) setProblemType(result.asset.category);
+          if (result.diagnostics?.technical_description && !description) {
+            setDescription(prev => prev ? prev + '\n\n' + result.diagnostics.technical_description : result.diagnostics.technical_description);
+          }
+        }
+      } catch (err) {
+        console.error('Image analysis failed:', err);
+      }
+    }
+  };
+
+  const removeImage = (idx: number) => {
+    setImages(prev => prev.filter((_, i) => i !== idx));
+  };
 
   const startRecording = useCallback(async () => {
     setError(null);
@@ -215,7 +269,7 @@ export default function VoiceReportPage() {
         description: (problem ? problem + '\n\n' : '') + description,
         impact: 3,
         likelihood: 3,
-        visibilityLevel: 'Internal',
+        imageName: images.map(img => img.name).join(', ') || null,
         latitude: lat,
         longitude: lng,
       });
@@ -239,6 +293,7 @@ export default function VoiceReportPage() {
     setDescription('');
     setRecordingDuration(0);
     setManualMode(!supported ? true : false);
+    setImages([]);
   };
 
   const handleManualSubmitText = () => {
@@ -346,6 +401,31 @@ export default function VoiceReportPage() {
               >
                 {t('voice.typeManually', lang)}
               </button>
+
+              <div className="flex items-center justify-center gap-4 pt-4 border-t border-white/5 mt-4">
+                <button
+                  onClick={() => cameraInputRef.current?.click()}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium bg-white/5 hover:bg-white/10 text-gray-400 dark:text-slate-400 border border-white/10 hover:border-purple-500/30 transition-all"
+                >
+                  <Camera size={16} /> {t('imgAI.camera', lang) || 'Photo'}
+                </button>
+                <button
+                  onClick={() => galleryInputRef.current?.click()}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium bg-white/5 hover:bg-white/10 text-gray-400 dark:text-slate-400 border border-white/10 hover:border-purple-500/30 transition-all"
+                >
+                  <ImagePlus size={16} /> {t('imgAI.gallery', lang) || 'Gallery'}
+                </button>
+              </div>
+              
+              {images.length > 0 && (
+                <div className="flex gap-2 justify-center mt-2">
+                  {images.map((img, i) => (
+                    <div key={i} className="w-8 h-8 rounded-md overflow-hidden border border-white/20">
+                      <img src={img.preview} alt="preview" className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -487,6 +567,45 @@ export default function VoiceReportPage() {
               />
             </div>
 
+            {/* Attachments Section */}
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">{t('report.attachments', lang) || 'Photo Attachments'}</label>
+              
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                {images.map((img, idx) => (
+                  <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 group">
+                    <img src={img.preview} alt="Attachment" className="w-full h-full object-cover" />
+                    {state === 'filled' && (
+                      <button
+                        onClick={() => removeImage(idx)}
+                        className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X size={14} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                
+                {state === 'filled' && images.length < 8 && (
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={() => cameraInputRef.current?.click()}
+                      className="flex-1 aspect-square rounded-xl border-2 border-dashed border-gray-200 dark:border-white/10 flex flex-col items-center justify-center gap-1.5 text-gray-400 hover:text-purple-400 hover:border-purple-500/30 hover:bg-purple-500/5 transition-all"
+                    >
+                      <Camera size={20} />
+                      <span className="text-[10px] font-medium">Camera</span>
+                    </button>
+                    <button
+                      onClick={() => galleryInputRef.current?.click()}
+                      className="flex-1 aspect-square rounded-xl border-2 border-dashed border-gray-200 dark:border-white/10 flex flex-col items-center justify-center gap-1.5 text-gray-400 hover:text-purple-400 hover:border-purple-500/30 hover:bg-purple-500/5 transition-all"
+                    >
+                      <ImagePlus size={20} />
+                      <span className="text-[10px] font-medium">Gallery</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
             {/* Raw fallback display */}
             {rawFallback && (
               <div className="space-y-2">
@@ -599,6 +718,23 @@ export default function VoiceReportPage() {
           </div>
         </div>
       )}
+      {/* Hidden Inputs */}
+      <input 
+        ref={cameraInputRef}
+        type="file" 
+        accept="image/*" 
+        capture="environment"
+        className="hidden" 
+        onChange={handleCameraCapture}
+      />
+      <input 
+        ref={galleryInputRef}
+        type="file" 
+        accept="image/*" 
+        multiple
+        className="hidden" 
+        onChange={handleGalleryPick}
+      />
     </div>
   );
 }

@@ -108,7 +108,7 @@ export default function ReportsPage() {
           <table className="w-full text-sm">
             <thead className="border-b border-gray-200 dark:border-white/5">
               <tr>
-                {[t('reports.company',lang), t('reports.asset',lang), t('reports.type',lang), t('reports.location',lang), t('reports.issue',lang), t('reports.impact',lang), t('reports.lklhd',lang), t('reports.score',lang), t('reports.risk',lang), t('reports.status',lang), t('reports.reviewed',lang), t('reports.created',lang), ''].map(h => (
+                {[t('reports.company',lang), 'Img', t('reports.asset',lang), t('reports.type',lang), t('reports.location',lang), t('reports.issue',lang), t('reports.impact',lang), t('reports.lklhd',lang), t('reports.score',lang), t('reports.risk',lang), t('reports.status',lang), t('reports.reviewed',lang), t('reports.created',lang), ''].map(h => (
                   <th key={h} className="px-3 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -117,6 +117,21 @@ export default function ReportsPage() {
               {reports.map((r: any) => (
                 <tr key={r.id} className="hover:bg-gray-50 dark:hover:bg-white/[0.03] cursor-pointer transition-colors" onClick={() => setSelectedReport(r)}>
                   <td className="px-3 py-2.5 text-xs text-gray-500 dark:text-slate-400">{r.company_name}</td>
+                  <td className="px-3 py-2.5">
+                    {r.image_name ? (
+                      <div className="w-8 h-8 rounded-md overflow-hidden border border-gray-200 dark:border-white/10 shadow-sm">
+                        <img 
+                          src={`https://images.unsplash.com/photo-1590674899484-d5640e854abe?auto=format&fit=crop&q=80&w=100&name=${encodeURIComponent(r.image_name.split(',')[0].trim())}`}
+                          alt="Thumbnail"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-8 h-8 rounded-md bg-gray-100 dark:bg-white/5 border border-dashed border-gray-200 dark:border-white/10 flex items-center justify-center">
+                        <ScanEye size={12} className="text-gray-300 dark:text-slate-700" />
+                      </div>
+                    )}
+                  </td>
                   <td className="px-3 py-2.5 font-medium text-xs text-gray-900 dark:text-slate-200">{r.asset_name}</td>
                   <td className="px-3 py-2.5 text-xs text-gray-500 dark:text-slate-500">{r.asset_type}</td>
                   <td className="px-3 py-2.5 text-xs text-gray-500 dark:text-slate-500">{r.location_name}</td>
@@ -157,6 +172,31 @@ export default function ReportsPage() {
             </div>
 
             <div className="text-sm"><span className="font-semibold text-gray-500 dark:text-slate-400">{t('reports.descLabel', lang)}:</span><p className="mt-1 text-gray-700 dark:text-slate-300">{selectedReport.description}</p></div>
+
+            {/* Photos Section */}
+            {selectedReport.image_name && (
+              <div className="space-y-2 pt-2">
+                <h3 className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">{t('report.photos', lang) || 'Attached Photos'}</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {selectedReport.image_name.split(',').map((name: string, i: number) => (
+                    <div key={i} className="group relative aspect-video rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 shadow-sm">
+                      <div className="absolute inset-0 flex items-center justify-center text-[10px] text-gray-400 text-center p-2 opacity-100 group-hover:opacity-0 transition-opacity">
+                        {name.trim()}
+                      </div>
+                      <img 
+                        src={`https://images.unsplash.com/photo-1590674899484-d5640e854abe?auto=format&fit=crop&q=80&w=400&name=${encodeURIComponent(name.trim())}`} 
+                        alt="Report attachment" 
+                        className="w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity"
+                        onLoad={(e) => (e.currentTarget.style.opacity = '1')}
+                      />
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button className="bg-white/20 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[10px] font-medium border border-white/30">View Full</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Notify Nearest Worker (admin/superadmin) */}
             {user && (user.role === 'admin' || user.role === 'superadmin') && (

@@ -34,7 +34,7 @@ threadsRouter.get('/', authMiddleware, async (req: AuthRequest, res) => {
       .select(`
         id, asset_name, asset_type, issue_type, description, location_name,
         risk_level, status, tenant_id, latitude, longitude, created_at,
-        assigned_worker_id, resolved_at, resolution_notes, reported_by,
+        assigned_worker_id, resolved_at, resolution_notes, reported_by, image_name,
         assigned_worker:assigned_worker_id ( id, full_name, worker_type, position ),
         reporter:reported_by ( id, full_name, worker_type, position )
       `)

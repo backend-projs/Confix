@@ -38,6 +38,8 @@ const translations: Record<string, Record<Lang, string>> = {
   'dashboard.statusOverview': { en: 'Status Overview', ru: 'Обзор статусов', az: 'Status icmalı' },
   'dashboard.assetTypes': { en: 'Asset Types', ru: 'Типы активов', az: 'Aktiv növləri' },
   'dashboard.latestReports': { en: 'Latest Reports', ru: 'Последние отчёты', az: 'Son hesabatlar' },
+  'dashboard.recentPhotos': { en: 'Recent Field Photos', ru: 'Последние фото с полей', az: 'Son sahə fotoları' },
+  'dashboard.infrastructureMap': { en: 'Infrastructure Map', ru: 'Карта инфраструктуры', az: 'İnfrastruktur xəritəsi' },
 
   // ── New Report ──
   'report.title': { en: 'New Field Report', ru: 'Новый полевой отчёт', az: 'Yeni sahə hesabatı' },
@@ -218,6 +220,9 @@ const translations: Record<string, Record<Lang, string>> = {
   'voice.aiCorrected': { en: 'AI Transcript Correction', ru: 'AI исправление транскрипции', az: 'AI transkripsiya düzəlişi' },
   'voice.rawHeard': { en: 'Raw (heard)', ru: 'Исходный (услышано)', az: 'Xam (eşidilən)' },
   'voice.corrected': { en: 'Corrected', ru: 'Исправлено', az: 'Düzəldilmiş' },
+  'voice.whereIncident': { en: 'Where did this happen?', ru: 'Где это произошло?', az: 'Bu harada baş verib?' },
+  'voice.pinLocation': { en: 'Please pin the exact location on the map.', ru: 'Укажите точное место на карте.', az: 'Zəhmət olmasa dəqiq yeri xəritədə qeyd edin.' },
+  'voice.locationName': { en: 'Location Name / Area', ru: 'Название места / Зона', az: 'Məkan adı / Ərazi' },
 
   // ── Image Analysis ──
   'nav.imageAnalysis': { en: 'Image AI', ru: 'Фото AI', az: 'Şəkil AI' },
