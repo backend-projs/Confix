@@ -97,7 +97,7 @@ export default function DashboardPage() {
       {/* Row 1: charts 2-col + list 1-col */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4">
         {/* Risk Donut */}
-        <div className="lg:col-span-3 bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 flex flex-col min-h-[260px] lg:min-h-0 shadow-sm dark:shadow-none">
+        <div className="lg:col-span-3 bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 flex flex-col h-[280px] shadow-sm dark:shadow-none">
           <h3 className="text-xs font-medium text-gray-500 dark:text-slate-500 uppercase tracking-wider mb-2">{t('dashboard.riskDistribution', lang)}</h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
@@ -122,7 +122,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Reports by Company — bar */}
-        <div className="lg:col-span-5 bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 flex flex-col min-h-[260px] lg:min-h-0 shadow-sm dark:shadow-none">
+        <div className="lg:col-span-5 bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 flex flex-col h-[280px] shadow-sm dark:shadow-none">
           <h3 className="text-xs font-medium text-gray-500 dark:text-slate-500 uppercase tracking-wider mb-2">{t('dashboard.reportsByCompany', lang)}</h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
@@ -165,7 +165,7 @@ export default function DashboardPage() {
       {/* Row 2: area + asset breakdown + recent */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4">
         {/* Status area chart */}
-        <div className="lg:col-span-5 bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 flex flex-col min-h-[260px] lg:min-h-0 shadow-sm dark:shadow-none">
+        <div className="lg:col-span-5 bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 flex flex-col h-[280px] shadow-sm dark:shadow-none">
           <h3 className="text-xs font-medium text-gray-500 dark:text-slate-500 uppercase tracking-wider mb-2">{t('dashboard.statusOverview', lang)}</h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
@@ -186,7 +186,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Asset breakdown — horizontal bar */}
-        <div className="lg:col-span-3 bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 flex flex-col min-h-[260px] lg:min-h-0 shadow-sm dark:shadow-none">
+        <div className="lg:col-span-3 bg-white dark:bg-[#16162a] rounded-xl border border-gray-200 dark:border-white/[0.04] p-4 sm:p-5 flex flex-col h-[280px] shadow-sm dark:shadow-none">
           <h3 className="text-xs font-medium text-gray-500 dark:text-slate-500 uppercase tracking-wider mb-2">{t('dashboard.assetTypes', lang)}</h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">

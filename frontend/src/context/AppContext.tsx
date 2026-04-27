@@ -55,8 +55,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
           if (u.company_id) setSelectedCompany(u.company_id);
         })
         .catch(() => {
+          // Token invalid - clear auth state immediately
           localStorage.removeItem('confix_token');
           setToken(null);
+          setUser(null);
         })
         .finally(() => setLoadingAuth(false));
     } else {

@@ -194,20 +194,37 @@ export default function TopBar() {
               </>
             )}
 
-            {/* Superadmin Link - Right Side */}
+            {/* Role-specific Links - Right Side */}
             {user?.role === 'superadmin' && (
               <Link
                 href="/superadmin"
                 className={cn(
-                  'flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap',
+                  'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 whitespace-nowrap border',
                   pathname === '/superadmin'
-                    ? 'bg-purple-50 text-purple-700 dark:bg-white/15 dark:text-white shadow-inner shadow-purple-500/10'
-                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
+                    ? 'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-500/20 dark:text-purple-300 dark:border-purple-500/30'
+                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:text-gray-900 dark:bg-white/5 dark:text-slate-300 dark:border-white/10 dark:hover:bg-white/10 dark:hover:text-white'
                 )}
               >
-                <Shield size={16} />
-                <span className="hidden xl:inline">{t('nav.superadmin', lang)}</span>
+                Superadmin
               </Link>
+            )}
+            {user?.role === 'admin' && (
+              <Link
+                href="/admin/workers"
+                className={cn(
+                  'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 whitespace-nowrap border',
+                  pathname === '/admin/workers'
+                    ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500/30'
+                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:text-gray-900 dark:bg-white/5 dark:text-slate-300 dark:border-white/10 dark:hover:bg-white/10 dark:hover:text-white'
+                )}
+              >
+                Admin
+              </Link>
+            )}
+            {user?.role === 'worker' && (
+              <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap border bg-green-50 text-green-700 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20">
+                Worker
+              </span>
             )}
 
             {!user && (
